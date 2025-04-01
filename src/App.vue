@@ -2,17 +2,19 @@
   <div class="min-h-screen bg-[#141414] text-white">
     <!-- Header -->
     <Header></Header>
+
     <main>
       <router-view></router-view>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#0f0f0f] py-8"></footer>
+     <Footer></Footer>
   </div>
 </template>
 
 <script setup>
 import Header from "./components/Header.vue";
+import Footer from "./components/Footer.vue";
 </script>
 
 <style>
