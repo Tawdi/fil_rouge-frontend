@@ -33,11 +33,11 @@
             <div class="hidden lg:block">
             <nav class="border-4 border-[#1a1a1a] bg-black rounded-[12px] p-2 ">
               <ul class="flex items-center gap-6 ">
-                  <li class="py-2 px-4 bg-[#1a1a1a] rounded-md "><router-link to="/" class="    text-white ">Home</router-link></li>
-                  <li class="py-2 px-4"><router-link to="/movies" class="  text-[#999999] hover:text-white transition-colors">Movies</router-link></li>
-                  <li class="py-2 px-4"><router-link to="/cinemas" class="  text-[#999999] hover:text-white transition-colors">Cinemas</router-link></li>
-                  <li class="py-2 px-4"><router-link to="/support" class="  text-[#999999] hover:text-white transition-colors">Support</router-link></li>
-                  <li class="py-2 px-4"><router-link to="/about" class="  text-[#999999] hover:text-white transition-colors">About</router-link></li>
+                  <li :class="['py-2 px-4 transition-colors', isActive('/') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']"><router-link to="/" class="    text-white ">Home</router-link></li>
+                  <li :class="['py-2 px-4 transition-colors', isActive('/movies') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']"><router-link to="/movies" class="">Movies</router-link></li>
+                  <li :class="['py-2 px-4 transition-colors', isActive('/cinemas') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']"><router-link to="/cinemas" class="">Cinemas</router-link></li>
+                  <li :class="['py-2 px-4 transition-colors', isActive('/support') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']"><router-link to="/support" class="">Support</router-link></li>
+                  <li :class="['py-2 px-4 transition-colors', isActive('/about') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']"><router-link to="/about" class="">About</router-link></li>
               </ul>
 
             </nav>
@@ -63,24 +63,24 @@
         <!-- mobile menu -->
         <div
           v-if="mobileMenuOpen"
-          class="absolute top-16 left-0 right-0 bg-[#1a1a1a] shadow-md lg:hidden"
+          class="absolute top-16 left-0 right-0 bg-[#111] shadow-md lg:hidden"
         >
           <nav class="flex flex-col space-y-4 p-4">
               <ul>
-                <li class="py-2 px-4 bg-[#1a1a1a] rounded-md">
-                  <router-link to="/" class="text-white" @click="closeMobileMenu">Home</router-link>
+                <li :class="['py-2 px-4 transition-colors', isActive('/') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']">
+                  <router-link to="/" class="" @click="closeMobileMenu">Home</router-link>
                 </li>
-                <li class="py-2 px-4">
-                  <router-link to="/movies" class="text-[#999999] hover:text-white transition-colors" @click="closeMobileMenu">Movies</router-link>
+                <li :class="['py-2 px-4 transition-colors', isActive('/movies') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']">
+                  <router-link to="/movies" class="" @click="closeMobileMenu">Movies</router-link>
                 </li>
-                <li class="py-2 px-4">
-                  <router-link to="/cinemas" class="text-[#999999] hover:text-white transition-colors" @click="closeMobileMenu">Cinemas</router-link>
+                <li :class="['py-2 px-4 transition-colors', isActive('/cinemas') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']">
+                  <router-link to="/cinemas" class="" @click="closeMobileMenu">Cinemas</router-link>
                 </li>
-                <li class="py-2 px-4">
-                  <router-link to="/support" class="text-[#999999] hover:text-white transition-colors" @click="closeMobileMenu">Support</router-link>
+                <li :class="['py-2 px-4 transition-colors', isActive('/support') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']">
+                  <router-link to="/support" class="" @click="closeMobileMenu">Support</router-link>
                 </li>
-                <li class="py-2 px-4">
-                  <router-link to="/about" class="text-[#999999] hover:text-white transition-colors" @click="closeMobileMenu">About</router-link>
+                <li :class="['py-2 px-4 transition-colors', isActive('/about') ? 'bg-[#1a1a1a] rounded-md' : 'text-[#999999] hover:text-white']">
+                  <router-link to="/about" class="" @click="closeMobileMenu">About</router-link>
                 </li>
               </ul>
           </nav>
@@ -105,11 +105,18 @@
 </template>
 <script setup>
 import { ref  } from 'vue';
+import { useRoute } from 'vue-router';
 let mobileMenuOpen = ref(false);
 const toggleMobileMenu = ()=>{
     mobileMenuOpen.value = !mobileMenuOpen.value;
 };
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false;
+};
+
+const route = useRoute();
+
+const isActive = (path) => {
+  return route.path === path;
 };
 </script>
