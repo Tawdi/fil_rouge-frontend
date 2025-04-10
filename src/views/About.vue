@@ -18,8 +18,36 @@
       </section>
   
       <!-- Mission Section -->
+      
+  
 
       <!-- Our Story Section -->
+      <section class="py-16 bg-[#0a0a0a]">
+        <div class="container mx-auto px-4">
+          <div class="flex flex-col md:flex-row gap-12 items-center">
+            <div class="md:w-1/2">
+              <h2 class="text-3xl font-bold mb-6">Our Story</h2>
+              <p class="text-gray-300 mb-4">
+                Founded in 2024, MovieSeat began with a simple idea: make booking movie tickets as enjoyable as watching the film itself.
+              </p>
+              <p class="text-gray-300 mb-4">
+                What started as a small startup in Youcode - Safi has grown into a global platform connecting millions of moviegoers with theaters worldwide. Our journey has been defined by a passion for cinema and a commitment to technological innovation.
+              </p>
+              
+            </div>
+            <div class="md:w-1/2">
+              <div class="relative">
+                <div class="absolute -inset-4 bg-red-500/20 rounded-xl blur-xl"></div>
+                <img 
+                  src="/images/about.jpeg" 
+                  alt="MovieSeat team" 
+                  class="relative rounded-xl w-full h-auto object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
   </template>
