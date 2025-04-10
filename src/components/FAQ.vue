@@ -91,3 +91,19 @@ const faqs = ref([
   }
 
 </script>
+<style>
+  .border-bottom-gradient {
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .border-bottom-gradient::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px; 
+    background: radial-gradient(circle, rgba(251, 63, 63, 0.8) 0%, rgba(255, 0, 24, 0) 100%);
+  }
+</style>
