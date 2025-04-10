@@ -64,12 +64,15 @@
         </div>
       </div>
     </div>
+     <!-- FAQ Section -->
+      <FAQ></FAQ>
 
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import FAQ from '../components/FAQ.vue';
 
 // Form data
 const form = ref({
