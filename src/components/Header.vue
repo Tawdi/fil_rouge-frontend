@@ -1,24 +1,26 @@
 <template>
-    <header class="sticky top-0 z-50 bg-[#0f0f0f]/80 backdrop-blur-sm">
+    <header class="sticky top-0 z-50 bg-[#0f0f0f]/50 backdrop-blur-sm py-4">
         <div class=" navbar mx-auto flex items-center justify-between py-4">
-          <div class="flex items-center gap-12">
+          <!-- <div class="flex items-center gap-12"> -->
             <a href="/" class="flex items-center gap-2">
               <div class="relative h-8 w-8 rounded-full bg-[#e50000] flex items-center justify-center">
                 <div class="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-0.5"></div>
               </div>
               <span class="text-xl font-bold">MovieSeat</span>
             </a>
-            <nav>
-              <ul class="flex items-center gap-6">
-                  <li><router-link to="/" class="text-white hover:text-[#e50000] transition-colors">Home</router-link></li>
-                  <li><router-link to="/movies" class="text-[#999999] hover:text-white transition-colors">Movies</router-link></li>
-                  <li><router-link to="/cinemas" class="text-[#999999] hover:text-white transition-colors">Cinemas</router-link></li>
-                  <li><router-link to="/support" class="text-[#999999] hover:text-white transition-colors">Support</router-link></li>
-                  <li><router-link to="/about" class="text-[#999999] hover:text-white transition-colors">About</router-link></li>
+            <div >
+            <nav class="border-4 border-[#1a1a1a] rounded-[12px] p-2 ">
+              <ul class="flex items-center gap-6 ">
+                  <li class="py-2 px-4 bg-[#1a1a1a] rounded-md "><router-link to="/" class="    text-white ">Home</router-link></li>
+                  <li class="py-2 px-4"><router-link to="/movies" class="  text-[#999999] hover:text-white transition-colors">Movies</router-link></li>
+                  <li class="py-2 px-4"><router-link to="/cinemas" class="  text-[#999999] hover:text-white transition-colors">Cinemas</router-link></li>
+                  <li class="py-2 px-4"><router-link to="/support" class="  text-[#999999] hover:text-white transition-colors">Support</router-link></li>
+                  <li class="py-2 px-4"><router-link to="/about" class="  text-[#999999] hover:text-white transition-colors">About</router-link></li>
               </ul>
 
             </nav>
-          </div>
+            </div>
+          <!-- </div> -->
           <div class="flex items-center gap-4">
             <button class="text-[#999999] hover:text-white p-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
