@@ -24,7 +24,44 @@
     </div>
   </section>
   <!-- currently in cinema -->
+  <section class="py-16 container mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-bold">Currently in the cinema</h2>
 
+      <!-- Slider Navigation -->
+      <div class="flex items-center gap-2">
+        <button
+          @click="prevSlide"
+          class="rounded-md border border-[#333333] text-[#999999] hover:text-white hover:border-[#e50000] p-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-chevron-left">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </button>
+
+        <!-- Progress Bar -->
+        <div class="w-24 h-1 bg-[#333333] rounded-full overflow-hidden relative">
+          <div
+            class="absolute top-0 left-0 h-full bg-[#e50000] transition-all duration-300"
+
+          ></div>
+        </div>
+
+        <button
+          @click="nextSlide"
+          class="rounded-md border border-[#333333] text-[#999999] hover:text-white hover:border-[#e50000] p-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-chevron-right">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup></script>
