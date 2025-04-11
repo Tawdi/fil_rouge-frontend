@@ -45,7 +45,10 @@
         <div class="w-24 h-1 bg-[#333333] rounded-full overflow-hidden relative">
           <div
             class="absolute top-0 left-0 h-full bg-[#e50000] transition-all duration-300"
-
+            :style="{
+              width: `${100 / totalSlides}%`,
+              marginLeft: `${(100 / totalSlides) * currentSlide}%`
+            }"
           ></div>
         </div>
 
@@ -61,9 +64,71 @@
         </button>
       </div>
     </div>
+
+    <!-- movies  -->
+    <div class="relative overflow-hidden">
+      <div
+        class="flex transition-transform duration-500 ease-in-out"
+        :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
+      >
+        <div
+          v-for="movie in movies"
+          :key="movie.title"
+          class="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-2"
+        >
+          <movie-card
+            :title="movie.title"
+            :image="movie.image"
+             :id="movie.id"
+            :duration="movie.duration"
+            :rating="movie.rating"
+            :genre="movie.genre"
+            :release-date="movie.releaseDate"
+          />
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
-<script setup></script>
+<script setup>
+
+import { ref, onMounted, watch, computed } from 'vue';
+import MovieCard from '../components/MovieCard.vue';
+
+
+onMounted(() => {
+  
+  updateItemsPerPage();
+  window.addEventListener('resize', updateItemsPerPage);
+});
+
+const movies = ref([
+  { id:1, title: "KANTARA", image: "https://picsum.photos/400/600?random=1", duration: "1h 57min", rating: 5, genre: "action", releaseDate: "12 Mar 2024" },
+  { id:2, title: "BLADE RUNNER 2049", image: "https://picsum.photos/400/600?random=2", duration: "2h 43min", rating: 5, genre: "sci-fi", releaseDate: "14 Mar 2024" },
+  { id:3, title: "PUSHPA", image: "https://picsum.photos/400/600?random=3", duration: "2h 10min", rating: 4, genre: "action", releaseDate: "16 Mar 2024" },
+  { id:4, title: "ADIPURUSH", image: "https://picsum.photos/400/600?random=4", duration: "1h 45min", rating: 3, genre: "drama", releaseDate: "18 Mar 2024" },
+  { id:5, title: "INCEPTION", image: "https://picsum.photos/400/600?random=5", duration: "2h 28min", rating: 5, genre: "sci-fi", releaseDate: "20 Mar 2024" },
+  { id:6, title: "THE BATMAN", image: "https://picsum.photos/400/600?random=6", duration: "2h 56min", rating: 4, genre: "action", releaseDate: "22 Mar 2024" },
+]);
+
+const itemsPerPage = ref(4);
+
+const currentSlide = ref(0);
+const totalSlides = computed(() => Math.ceil(movies.value.length / itemsPerPage.value));
+
+const nextSlide = () => {
+  if (currentSlide.value < totalSlides.value - 1) {
+    currentSlide.value++;
+  }
+};
+
+const prevSlide = () => {
+  if (currentSlide.value > 0) {
+    currentSlide.value--;
+  }
+};
+
+</script>
 
 <style scoped></style>
