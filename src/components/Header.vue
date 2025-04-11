@@ -1,5 +1,5 @@
 <template>
-    <header class="sticky top-0 z-50 bg-[#0f0f0f]/50 backdrop-blur-sm py-4">
+    <header  class="fixed top-0 z-[100] w-full bg-[#0f0f0f]/50 backdrop-blur-sm py-4">
         <div class=" navbar mx-auto flex items-center justify-between py-4">
           <!-- <div class="flex items-center gap-12"> -->
             <a href="/" class="flex items-center gap-2">

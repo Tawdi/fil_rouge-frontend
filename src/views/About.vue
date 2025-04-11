@@ -2,10 +2,10 @@
     <div class="">
 
       <!-- Hero Section -->
-      <section class="relative py-20 overflow-hidden">
+      <section class="relative py-44 overflow-hidden">
         <div class="absolute inset-0 z-0">
-          <div class="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black"></div>
-          <div class="absolute inset-0 bg-[url('/images/about_hero.jpeg')] bg-cover bg-center opacity-20"></div>
+          <div class="absolute inset-0 bg-gradient-to-b from-black via-black/20 to-black"></div>
+          <div class="absolute inset-0 bg-[url('/images/about_hero.jpeg')] bg-cover bg-center opacity-40"></div>
         </div>
         
         <div class="container mx-auto px-4 relative z-10">

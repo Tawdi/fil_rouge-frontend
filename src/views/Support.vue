@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto mt-10 p-4">
+  <div class="max-w-7xl mx-auto pt-44 px-4">
     <!-- Support Section -->
     <div class="grid md:grid-cols-2 gap-5 lg:gap-12 ">
       <div class="flex flex-col justify-between">
