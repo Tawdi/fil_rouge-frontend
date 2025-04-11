@@ -114,6 +114,17 @@ const movies = ref([
 
 const itemsPerPage = ref(4);
 
+const updateItemsPerPage = () => {
+  const width = window.innerWidth;
+  if (width < 640) {
+    itemsPerPage.value = 1; 
+  } else if (width >= 640 && width < 1024) {
+    itemsPerPage.value = 2;
+  } else {
+    itemsPerPage.value = 4; 
+  }
+};
+
 const currentSlide = ref(0);
 const totalSlides = computed(() => Math.ceil(movies.value.length / itemsPerPage.value));
 
