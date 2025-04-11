@@ -1,6 +1,6 @@
 <template>
   <div class="group relative rounded-lg overflow-hidden bg-[#1a1a1a] transition-transform hover:-translate-y-1"
-
+   @click="goToMovieDetail"
   >
     <div class="relative aspect-[2/3] w-full overflow-hidden">
       <div 
@@ -33,6 +33,7 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   id: Number,
@@ -43,6 +44,9 @@ const props = defineProps({
   genre: String,
   releaseDate: String
 });
+const router = useRouter();
 
-
+const goToMovieDetail = () => {
+  router.push(`/movie/${props.id}`);
+};
 </script>
