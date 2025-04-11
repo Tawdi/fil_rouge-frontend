@@ -1,11 +1,15 @@
 <template>
   <div class="mt-24">
+    <div class="flex items-center justify-between">
+    <div>
     <h2 class="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
     <p class="text-[#999999] mb-8">
       Got questions? We've got answers! Check out our FAQ section to find answers to the most common questions
       about MovieSeat.
     </p>
-
+  </div>
+    <slot></slot>
+  </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- FAQ Items -->
       <div v-for="(faq, index) in faqs" :key="index" class="border-bottom-gradient">

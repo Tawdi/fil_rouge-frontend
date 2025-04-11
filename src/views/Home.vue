@@ -152,6 +152,14 @@
             </div>
           </div>
         </div>
+
+         <!-- FAQ Section -->
+      <FAQ>
+        <button 
+        class="bg-[#e50000] hover:bg-[#ff0707] text-white font-medium py-3 px-8 rounded-md flex items-center gap-2 transition-colors">
+         Ask a Question
+       </button>
+      </FAQ>
 </section>
     
 </template>
@@ -161,6 +169,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import MovieCard from '../components/MovieCard.vue';
 import CategoryCard from '../components/CategoryCard.vue';
+import FAQ from '../components/FAQ.vue';
 
 
 onMounted(() => {
