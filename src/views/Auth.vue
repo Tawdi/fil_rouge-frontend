@@ -18,10 +18,78 @@
         </button>
       </div>
 
-       <!-- Login Form -->
+      <!-- Login Form -->
       <div v-if="activeTab === 'login'" class="p-6">
         <h2 class="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
-
+        
+        <form @submit.prevent="handleLogin">
+          <div class="space-y-4">
+            <div>
+              <label for="login-email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+              <input 
+                id="login-email" 
+                type="email" 
+                v-model="loginForm.email"
+                class="w-full px-4 py-2 bg-[#272727] border border-[#333] rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="your@email.com"
+                required
+              />
+            </div>
+            
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label for="login-password" class="block text-sm font-medium text-gray-300">Password</label>
+                <a href="#" class="text-xs text-red-400 hover:text-red-300">Forgot Password?</a>
+              </div>
+              <input 
+                id="login-password" 
+                type="password" 
+                v-model="loginForm.password"
+                class="w-full px-4 py-2 bg-[#272727] border border-[#333] rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+            
+            <div class="flex items-center">
+              <input 
+                id="remember-me" 
+                type="checkbox" 
+                v-model="loginForm.rememberMe"
+                class="h-4 w-4 bg-[#272727] border-[#333] rounded focus:ring-red-500 text-red-600"
+              />
+              <label for="remember-me" class="ml-2 block text-sm text-gray-300">Remember me</label>
+            </div>
+            
+            <button 
+              type="submit"
+              class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
+            >
+              Sign In
+            </button>
+          </div>
+        </form>
+        
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-[#333]"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-[#1a1a1a] text-gray-400">Or continue with</span>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <button class="flex w-full justify-center items-center py-2 px-4 border border-[#333] rounded-lg hover:bg-[#272727] transition-colors">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+              </svg>
+            </button>
+            
+            
+          </div>
+        </div>
       </div>
        <!-- Register Form -->
       <div v-if="activeTab === 'register'" class="p-6">
@@ -34,9 +102,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 const activeTab = ref('login')
+
+const loginForm = reactive({
+email: '',
+password: '',
+rememberMe: false
+})
+
+const handleLogin = () => {
+
+  console.log('Login form submitted:', loginForm)
+
+}
 </script>
 
   <style>
