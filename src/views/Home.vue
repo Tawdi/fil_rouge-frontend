@@ -89,12 +89,78 @@
       </div>
     </div>
   </section>
+
+      <!-- Categories Section -->
+    <section class="max-w-7xl mx-auto px-4 py-20">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div>
+        <h2 class="text-3xl font-bold mb-2">Explore our wide variety of categories</h2>
+        <p class="text-[#999999]">
+          Whether you're looking for a comedy to make you laugh, a drama to make you think, or a documentary to
+          learn something new
+        </p>
+      </div>
+      <!-- Slider Navigation - Categories -->
+      <div class="flex items-center gap-2">
+            <button
+              @click="prevCategorySlide"
+              class="rounded-md border border-[#333333] text-[#999999] hover:text-white hover:border-[#e50000] p-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-left">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+
+            <div class="w-24 h-1 bg-[#333333] rounded-full overflow-hidden relative">
+              <div
+                class="absolute top-0 left-0 h-full bg-[#e50000] transition-all duration-300"
+                :style="{
+                  width: `${100 / totalCategorySlides}%`,
+                  marginLeft: `${(100 / totalCategorySlides) * currentCategorySlide}%`
+                }"
+              ></div>
+            </div>
+
+            <button
+              @click="nextCategorySlide"
+              class="rounded-md border border-[#333333] text-[#999999] hover:text-white hover:border-[#e50000] p-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-right">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="relative overflow-hidden">
+          <div
+            class="flex transition-transform duration-500 ease-in-out"
+            :style="{ transform: `translateX(-${currentCategorySlide * 100}%)` }"
+          >
+            <div
+              v-for="category in categories"
+              :key="category.name"
+              class="w-1/2 sm:w-1/3 lg:w-1/5 flex-shrink-0 px-2"
+            >
+            <CategoryCard
+              :name="category.name"
+              :posters="category.posters"
+            />
+            </div>
+          </div>
+        </div>
+</section>
+    
 </template>
 
 <script setup>
 
 import { ref, onMounted, watch, computed } from 'vue';
 import MovieCard from '../components/MovieCard.vue';
+import CategoryCard from '../components/CategoryCard.vue';
 
 
 onMounted(() => {
@@ -112,16 +178,86 @@ const movies = ref([
   { id:6, title: "THE BATMAN", image: "https://picsum.photos/400/600?random=6", duration: "2h 56min", rating: 4, genre: "action", releaseDate: "22 Mar 2024" },
 ]);
 
+const categories =ref( [
+        {
+          name: 'Action',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Adventure',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Comedy',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Drama',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Horror',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },{
+          name: 'Drama',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Horror',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+      ]);
+
 const itemsPerPage = ref(4);
+const itemsPerPageCategory =ref(5);
 
 const updateItemsPerPage = () => {
   const width = window.innerWidth;
   if (width < 640) {
     itemsPerPage.value = 1; 
+    itemsPerPageCategory.value=2;
   } else if (width >= 640 && width < 1024) {
     itemsPerPage.value = 2;
+    itemsPerPageCategory.value=3;
+
   } else {
     itemsPerPage.value = 4; 
+    itemsPerPageCategory.value=5;
   }
 };
 
@@ -139,6 +275,27 @@ const prevSlide = () => {
     currentSlide.value--;
   }
 };
+
+
+// category carousel 
+
+const currentCategorySlide = ref(0);
+const totalCategorySlides = computed(() =>
+  Math.ceil(categories.value.length / itemsPerPageCategory.value)
+);
+
+const nextCategorySlide = () => {
+  if (currentCategorySlide.value < totalCategorySlides.value - 1) {
+    currentCategorySlide.value++;
+  }
+};
+
+const prevCategorySlide = () => {
+  if (currentCategorySlide.value > 0) {
+    currentCategorySlide.value--;
+  }
+};
+
 
 </script>
 
