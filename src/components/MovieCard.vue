@@ -17,16 +17,21 @@
       </div>
     </div>
     <div class="p-4 space-y-3">
-      <div class="flex items-center gap-2 text-[#999999] text-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span>{{ duration }}</span>
-      </div>
-      <div class="flex items-center gap-1">
-        <div v-for="i in 5" :key="i" class="h-2 w-2 rounded-full" :class="i <= rating ? 'bg-[#e50000]' : 'bg-[#333333]'"></div>
+      <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2 bg-[#141414] border-[#262626] border-2 px-2 py-1 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock text-gray-400"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="text-gray-400">{{ duration }}</span>
+            </div>
+            <div class="flex bg-[#141414] border-[#262626] border-2 px-2 py-1 rounded-full">
+              <template v-for="n in 5" :key="n">
+                <svg v-if="n <= rating" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FF4D4D" stroke="#FF4D4D"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF4D4D"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </template>
+            </div>
       </div>
       <div class="flex items-center justify-between text-sm">
-        <span class="text-[#999999] capitalize">{{ genre }}</span>
-        <span class="text-[#999999]">{{ releaseDate }}</span>
+        <span class="text-[#999999] capitalize bg-[#141414] border-[#262626] border-2 px-4 py-1 rounded-full">{{ genre }}</span>
+        <span class="text-[#999999] bg-[#141414] border-[#262626] border-2 px-4 py-1 rounded-full">{{ releaseDate }}</span>
       </div>
     </div>
   </div>
