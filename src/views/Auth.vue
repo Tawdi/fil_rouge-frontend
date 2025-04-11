@@ -5,14 +5,14 @@
         <button 
           class="flex-1 py-4 text-center font-medium transition-colors"
           :class="activeTab === 'login' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400 hover:text-white'"
-          @click="activeTab = 'login'"
+          @click="activeTab = 'login' ;submitted=false"
         >
           Login
         </button>
         <button 
           class="flex-1 py-4 text-center font-medium transition-colors"
           :class="activeTab === 'register' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-400 hover:text-white'"
-          @click="activeTab = 'register'"
+          @click="activeTab = 'register';submitted=false"
         >
           Register
         </button>
