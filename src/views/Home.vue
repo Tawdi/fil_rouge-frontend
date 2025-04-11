@@ -13,6 +13,7 @@
         Find your favorite movies, pick your seats, and enjoy the show.
       </p>
       <button
+       @click="goToPage('/movies')"
         class="bg-[#e50000] hover:bg-[#ff0707] text-white font-medium py-3 px-8 rounded-md flex items-center gap-2 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
           <path fill-rule="evenodd"
@@ -156,6 +157,7 @@
          <!-- FAQ Section -->
       <FAQ>
         <button 
+        @click="goToPage('/support')"
         class="bg-[#e50000] hover:bg-[#ff0707] text-white font-medium py-3 px-8 rounded-md flex items-center gap-2 transition-colors">
          Ask a Question
        </button>
@@ -170,7 +172,10 @@ import { ref, onMounted, watch, computed } from 'vue';
 import MovieCard from '../components/MovieCard.vue';
 import CategoryCard from '../components/CategoryCard.vue';
 import FAQ from '../components/FAQ.vue';
+import { useRouter } from 'vue-router';
 
+
+const router = useRouter();
 
 onMounted(() => {
   
@@ -305,6 +310,9 @@ const prevCategorySlide = () => {
   }
 };
 
+const goToPage = (path)=>{
+  router.push(path);
+}
 
 </script>
 
