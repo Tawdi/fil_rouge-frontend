@@ -34,6 +34,7 @@
                 placeholder="your@email.com"
                 required
               />
+              <p v-if="submitted && !loginEmailValid" class="text-red-500 text-sm">Please enter a valid email address</p>
             </div>
             
             <div>
@@ -86,8 +87,6 @@
                 <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
               </svg>
             </button>
-            
-            
           </div>
         </div>
       </div>
@@ -99,15 +98,15 @@
         <form @submit.prevent="handleRegister">
           <div class="space-y-4">
             <div>
-            <label for="first-name" class="block text-sm font-medium text-gray-300 mb-1">First Name</label>
-            <input 
-                id="first-name" 
+              <label for="full-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+              <input 
+                id="full-name" 
                 type="text" 
-                v-model="registerForm.name"
+                v-model="registerForm.fullName"
                 class="w-full px-4 py-2 bg-[#272727] border border-[#333] rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                placeholder="John"
+                placeholder="your name"
                 required
-            />
+              />
             </div>
             <div>
               <label for="register-email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
@@ -119,6 +118,7 @@
                 placeholder="your@email.com"
                 required
               />
+              <p v-if="submitted && !registerEmailValid" class="text-red-500 text-sm">Please enter a valid email address</p>
             </div>
             
             <div>
@@ -142,8 +142,9 @@
                 placeholder="••••••••"
                 required
               />
-              <p v-if="passwordMismatch" class="mt-1 text-sm text-red-500">Passwords do not match</p>
+              <p v-if="submitted && passwordMismatch" class="mt-1 text-sm text-red-500">Passwords do not match</p>
             </div>
+
             <button 
               type="submit"
               class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
@@ -163,26 +164,25 @@
             </div>
           </div>
           
-          <div class="mt-6 ">
+          <div class="mt-6">
             <button class="flex justify-center w-full items-center py-2 px-4 border border-[#333] rounded-lg hover:bg-[#272727] transition-colors">
               <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
               </svg>
             </button>
-  
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { computed, reactive, ref } from 'vue';
 
 const activeTab = ref('login')
-
+const submitted = ref(false);
 const loginForm = reactive({
 email: '',
 password: '',
@@ -190,19 +190,20 @@ rememberMe: false
 })
 
 const registerForm = reactive({
-firstName: '',
-lastName: '',
+fullName: '',
 email: '',
 password: '',
-confirmPassword: '',
-agreeTerms: false
+confirmPassword: ''
 })
 
 const handleLogin = () => {
-
-  console.log('Login form submitted:', loginForm)
-
-}
+  submitted.value = true;
+  if (!loginFormValid.value) {
+  console.log("login error");
+    return;
+  }
+  console.log('Login form submitted:', loginForm);
+};
 
 const passwordMismatch = computed(() => {
 return registerForm.password && 
@@ -210,13 +211,40 @@ return registerForm.password &&
      registerForm.password !== registerForm.confirmPassword
 })
 
+const loginEmailValid = computed(() => {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  return regex.test(loginForm.email);
+});
+
+const registerEmailValid = computed(() => {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  return regex.test(registerForm.email);
+});
+
+const loginFormValid = computed(() => {
+  return loginEmailValid.value && loginForm.password.trim() !== '';
+});
+
+const registerFormValid = computed(() => {
+  return (
+    registerForm.fullName.trim() !== '' &&
+    registerEmailValid.value &&
+    registerForm.password.trim() !== '' &&
+    registerForm.confirmPassword.trim() !== '' &&
+    !passwordMismatch.value
+  );
+});
+
 const handleRegister = () => {
-if (passwordMismatch.value) {
+  submitted.value = true;
+if (!registerFormValid.value) {
+  console.log("register error");
 return
 }
 console.log('Register form submitted:', registerForm)
 
 }
+
 </script>
 
   <style>
