@@ -55,9 +55,23 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
               <span class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#e50000] text-[10px] flex items-center justify-center">2</span>
             </button>
-            <button class="text-[#999999] hover:text-white p-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <div class="relative" @click="toggleDropdown">
+            <button class="text-[#999999] hover:text-white p-2 flex items-center gap-1">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
             </button>
+            <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-md shadow-lg border border-gray-700 z-50">
+              <ul class="py-2 text-sm text-white">
+                <li><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
+                <li><router-link to="/settings" class="block px-4 py-2 hover:bg-[#333]">Settings</router-link></li>
+                <li><button @click="logout" class="block w-full text-left px-4 py-2 hover:bg-[#333]">Logout</button></li>
+              </ul>
+            </div>
+          </div>
           </div>
         </div>
         <!-- mobile menu -->
@@ -100,6 +114,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </button>
           </div>
+          
         </div>
       </header>
 </template>
@@ -119,4 +134,10 @@ const route = useRoute();
 const isActive = (path) => {
   return route.path === path;
 };
+const showDropdown = ref(false)
+
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value
+}
+
 </script>
