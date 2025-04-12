@@ -41,6 +41,32 @@
         </div>
       </div>
     </section>
+
+        <!-- Date Selection -->
+    <section class="container mx-auto mt-8 px-4">
+      <div class="bg-[#1f1f1f] rounded-xl p-4">
+        <div class="flex justify-center items-center flex-wrap  gap-8">
+
+            <button 
+              v-for="(day, index) in days" 
+              :key="index"
+              class="w-20 h-20 rounded-lg flex flex-col items-center justify-center text-[#272727] bg-[#D9D9D9]"
+              :class="{ 'border-b-8 border-yellow-400': index === selectedDay }"
+              @click="selectedDay = index"
+            >
+              <span class="text-xs">{{ day.name }}</span>
+              <span class="text-xl font-bold">{{ day.date }}</span>
+              <span class="text-xs">{{ day.month }}</span>
+            </button>
+            <div class="text-[#272727] w-20 h-20 bg-[#D9D9D9] p-3 rounded-lg flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="text-xs block text-center mt-1">Calendar</span>
+          </div>
+          </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -57,6 +83,15 @@ const movie = ref({
   genre: "action",
   desc :" A fiery young man clashes with an unflinching forest officer in a south Indian village where spirituality, fate and folklore rule the lands.",
 })
+
+const selectedDay =ref(0);
+const days = ref([
+        { name: 'THU', date: '25', month: 'MAR' },
+        { name: 'FRI', date: '26', month: 'MAR' },
+        { name: 'SAT', date: '27', month: 'MAR' },
+        { name: 'SUN', date: '28', month: 'MAR' },
+        { name: 'MON', date: '29', month: 'MAR' }
+      ]);
 
 </script>
 
