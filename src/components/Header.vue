@@ -44,12 +44,8 @@
             </div>
           <!-- </div> -->
           <div class=" items-center gap-4  hidden lg:flex">
-            <button class="text-[#999999] hover:text-white p-2">
+            <button class="text-[#999999] hover:text-white p-2" @click="toggleSearchModal">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            </button>
-            <button class="text-[#999999] hover:text-white p-2 relative">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-              <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#e50000]"></span>
             </button>
             <button class="text-[#999999] hover:text-white p-2 relative" 
             @click="toggleShoppingCart"
@@ -69,7 +65,6 @@
             <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-md shadow-lg border border-gray-700 z-50">
               <ul class="py-2 text-sm text-white">
                 <li><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
-                <li><router-link to="/settings" class="block px-4 py-2 hover:bg-[#333]">Settings</router-link></li>
                 <li><button @click="logout" class="block w-full text-left px-4 py-2 hover:bg-[#333]">Logout</button></li>
               </ul>
             </div>
@@ -100,14 +95,11 @@
                 </li>
               </ul>
           </nav>
-          <div class=" items-center gap-4 flex justify-center">
+          <div class=" items-center gap-4 flex justify-center" @click="toggleSearchModal">
             <button class="text-[#999999] hover:text-white p-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             </button>
-            <button class="text-[#999999] hover:text-white p-2 relative">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-              <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#e50000]"></span>
-            </button>
+
             <button class="text-[#999999] hover:text-white p-2 relative" @click="toggleShoppingCart">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
               <span class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#e50000] text-[10px] flex items-center justify-center">2</span>
@@ -119,7 +111,6 @@
             <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-md shadow-lg border border-gray-700 z-50">
               <ul class="py-2 text-sm text-white">
                 <li><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
-                <li><router-link to="/settings" class="block px-4 py-2 hover:bg-[#333]">Settings</router-link></li>
                 <li><button @click="logout" class="block w-full text-left px-4 py-2 hover:bg-[#333]">Logout</button></li>
               </ul>
             </div>
@@ -130,14 +121,38 @@
         <!-- shopping cart -->
         <transition name="slide-cart">
           <div v-show="showShoppingCart" class="h-screen w-full lg:w-8/12 bg-[#1A1A1A] ml-auto relative">
-            <span @click="toggleShoppingCart" class="absolute top-2 right-4 text-white font-bold rounded-full bg-slate-700 opacity-70 size-9 flex items-center justify-center hover:opacity-100">
+            <span @click="toggleShoppingCart" class="absolute top-2 right-4 text-white font-bold rounded-full bg-red-700 opacity-70 size-9 flex items-center justify-center hover:opacity-100">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
             </span>
           </div>
         </transition>
+
       </header>
+      <transition name="fade">
+        <div
+          v-if="showSearchModal"
+          class="fixed inset-0 z-[200] bg-black bg-opacity-70 flex items-center justify-center px-4"
+        >
+          <div class="bg-[#1a1a1a] text-white w-full max-w-lg rounded-xl p-6 relative">
+            <!-- Close Button -->
+            <button @click="toggleSearchModal" class="absolute top-3 right-3 text-white hover:text-red-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 class="text-xl font-bold mb-4">Search Movies</h2>
+            <input
+              type="text"
+              placeholder="Search for a movie..."
+              class="w-full px-4 py-2 rounded-md bg-[#2a2a2a] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
+        </div>
+      </transition>
+
 </template>
 <script setup>
 import { ref  } from 'vue';
@@ -168,6 +183,13 @@ const toggleShoppingCart = ()=>{
 }
 
 
+const cartItems = ref([]);
+
+const showSearchModal = ref(false);
+
+const toggleSearchModal = () => {
+  showSearchModal.value = !showSearchModal.value;
+};
 </script>
 
 
@@ -190,5 +212,18 @@ const toggleShoppingCart = ()=>{
 .slide-cart-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
 }
 </style>
