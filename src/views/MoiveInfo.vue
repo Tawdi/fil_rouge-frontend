@@ -1,7 +1,7 @@
 <template>
-  <div class="pt-16">
+  <div class="pt-16 ">
     <!-- Hero Section -->
-    <section class="container mx-auto mt-4 px-4">
+    <section class="container mx-auto  px-4">
       <div class="relative rounded-xl overflow-hidden lg:h-[600px] ">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30">
@@ -43,7 +43,7 @@
     </section>
 
         <!-- Date Selection -->
-    <section class="container mx-auto mt-8 px-4">
+    <section class="container mx-auto  px-4">
       <div class="bg-[#1f1f1f] rounded-xl p-4">
         <div class="flex justify-center items-center flex-wrap  gap-8">
 
@@ -65,6 +65,25 @@
             <span class="text-xs block text-center mt-1">Calendar</span>
           </div>
           </div>
+      </div>
+    </section>
+
+        <!-- Cinema and Showtimes -->
+    <section class="container mx-auto  px-4 ">
+      <div class="bg-[#1f1f1f] rounded-xl p-6">
+        <h2 class="text-2xl font-bold mb-1">Cinema Alpha</h2>
+        <p class="text-gray-400 mb-6">Casablanca CT 1029 Ain Chock</p>
+
+        <div class="flex space-x-4 ">
+          <button 
+            v-for="(time, index) in showtimes" 
+            :key="index"
+            class="bg-yellow-400 text-black font-bold py-3 px-8 rounded-lg"
+          >
+            <div class="text-xl">{{ time.time }}</div>
+            <div class="text-xs">{{ time.seats }} seats left</div>
+          </button>
+        </div>
       </div>
     </section>
   </div>
@@ -93,6 +112,11 @@ const days = ref([
         { name: 'MON', date: '29', month: 'MAR' }
       ]);
 
+const showtimes= ref( [
+        { time: '12:30', seats: '20' },
+        { time: '15:00', seats: '100' },
+        { time: '18:30', seats: '120' }
+      ])
 </script>
 
 <style>
