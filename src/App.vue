@@ -29,13 +29,13 @@ import Footer from "./components/Footer.vue";
 @media (min-width: 640px) {
   .container,
   .navbar {
-    padding: 0 1.5rem;
+    padding: 1rem 1.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .container {
-    padding: 4rem 2rem;
+    padding: 2rem 1rem;
   }
 
   .navbar {

@@ -74,7 +74,7 @@
         <h2 class="text-2xl font-bold mb-1">Cinema Alpha</h2>
         <p class="text-gray-400 mb-6">Casablanca CT 1029 Ain Chock</p>
 
-        <div class="flex space-x-4 ">
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-8">
           <button 
             v-for="(time, index) in showtimes" 
             :key="index"
