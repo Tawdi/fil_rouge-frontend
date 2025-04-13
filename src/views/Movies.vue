@@ -54,4 +54,59 @@
 </div>
 </section>
 </template>
-<script setup></script>
+
+<script setup>
+  import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+  
+  const slides = ref([
+    {
+      id: 1,
+      title: 'Avengers: Endgame',
+      description:
+        'With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos’s actions.',
+      image: '/images/support.webp',
+    },
+    {
+      id: 2,
+      title: 'Avatar: The Way of Water',
+      description: 'Jake Sully lives with his newfound family on the planet of Pandora.',
+      image: '/images/about.jpeg',
+    },
+    {
+      id: 3,
+      title: 'Spider-Man: No Way Home',
+      description: 'Peter Parker’s secret identity is revealed and he seeks help from Doctor Strange.',
+      image: '/images/about_hero.jpeg',
+    },
+  ])
+  
+  const currentSlide = ref(0)
+  
+  const nextSlide = () => {
+    currentSlide.value = (currentSlide.value + 1) % slides.value.length
+  }
+  
+  const prevSlide = () => {
+    currentSlide.value =
+      (currentSlide.value - 1 + slides.value.length) % slides.value.length
+  }
+  
+  const goToSlide = (index) => {
+    currentSlide.value = index
+  }
+  
+  let autoSlideInterval
+  onMounted(() => {
+    autoSlideInterval = setInterval(nextSlide, 5000)
+  })
+  
+  const router = useRouter();
+  const goToMovie = (id)=>{
+    router.push(`movie/${id}`)
+  }
+
+  onBeforeUnmount(() => {
+    clearInterval(autoSlideInterval)
+  })
+  </script>
