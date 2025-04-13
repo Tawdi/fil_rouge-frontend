@@ -25,7 +25,33 @@
             </div>
         </div>
     </div>
-
+    
+<!-- Bottom Navigation Controls -->
+<div class="absolute bottom-6 right-0 flex items-center justify-between w-full gap-4 px-10 z-10">
+    
+    <button @click="prevSlide" class="rounded-md border border-[#333333] text-[#999999] hover:text-white hover:border-[#e50000] p-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <!-- Dots -->
+        <div class="flex gap-2 ">
+            <span
+            v-for="(dot, i) in slides"
+            :key="i"
+            @click="goToSlide(i)"
+            class=" h-1 rounded-md cursor-pointer transition-all duration-300"
+            :class="currentSlide === i ? 'bg-red-600 scale-110 w-4' : 'bg-white/50 w-2.5'"
+            ></span>
+        </div>
+        
+        <button @click="nextSlide" class="rounded-md border border-[#333333] text-[#999999] hover:text-white hover:border-[#e50000] p-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        
+</div>
 </section>
 </template>
 <script setup></script>
