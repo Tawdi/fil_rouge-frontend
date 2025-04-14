@@ -41,7 +41,71 @@
 
       <!-- Personal Information Tab -->
       <div v-if="activeTab === 'personal'" class=" gap-8">
+        <div class="">
+          <div class="bg-[#1a1a1a] rounded-lg border border-[#333333] mb-8">
+            <div class="p-6 border-b border-[#333333]">
+              <h2 class="text-xl font-bold">Personal Information</h2>
+            </div>
+            <div class="p-6">
+              <form @submit.prevent="savePersonalInfo">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label class="block text-sm font-medium text-[#999999] mb-2">Full Name</label>
+                    <input type="text" v-model="Profile.name"
+                      class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
+                  </div>
 
+                  <div>
+                    <label class="block text-sm font-medium text-[#999999] mb-2">Email Address</label>
+                    <input type="email" v-model="Profile.email"
+                      class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
+                  </div>
+
+                </div>
+
+                <div class="flex justify-end">
+                  <button type="submit"
+                    class="bg-[#e50000] hover:bg-[#ff0707] text-white font-medium py-2 px-6 rounded-md transition-colors">
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="bg-[#1a1a1a] rounded-lg border border-[#333333]">
+            <div class="p-6 border-b border-[#333333]">
+              <h2 class="text-xl font-bold">Password & Security</h2>
+            </div>
+            <div class="p-6">
+              <form @submit.prevent="changePassword">
+                <div class="space-y-4 mb-6">
+                  <div>
+                    <label class="block text-sm font-medium text-[#999999] mb-2">Current Password</label>
+                    <input type="password" v-model="passwordInfo.current"
+                      class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-[#999999] mb-2">New Password</label>
+                    <input type="password" v-model="passwordInfo.new"
+                      class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-[#999999] mb-2">Confirm New Password</label>
+                    <input type="password" v-model="passwordInfo.confirm"
+                      class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <button type="submit"
+                    class="bg-[#e50000] hover:bg-[#ff0707] text-white font-medium py-2 px-6 rounded-md transition-colors">
+                    Update Password
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Bookings Tab -->
@@ -66,5 +130,10 @@ const Profile = ref({
   'email': "ahmed.ahmed@gmail.com",
   'image': "/images/support.webp",
   'created_at': "April 2024"
+});
+const passwordInfo = ref({
+  current: '',
+  new: '',
+  confirm: ''
 });
 </script>
