@@ -24,13 +24,43 @@
         </div>
       </div>
     </section>
+    <section class="max-w-7xl mx-auto px-4 py-8">
+      <!-- Tabs -->
+      <div class="border-b border-[#333333] mb-8">
+        <div class="flex overflow-x-auto scrollbar-hide">
+          <button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
+            'px-6 py-4 font-medium whitespace-nowrap transition-colors',
+            activeTab === tab.id
+              ? 'text-[#e50000] border-b-2 border-[#e50000]'
+              : 'text-[#999999] hover:text-white'
+          ]">
+            {{ tab.name }}
+          </button>
+        </div>
+      </div>
 
+      <!-- Personal Information Tab -->
+      <div v-if="activeTab === 'personal'" class=" gap-8">
+
+      </div>
+
+      <!-- Bookings Tab -->
+      <div v-if="activeTab === 'bookings'" class="space-y-8">
+
+      </div>
+
+    </section>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 
+const activeTab = ref('personal');
+const tabs = [
+  { id: 'personal', name: 'Personal Information' },
+  { id: 'bookings', name: 'My Bookings' },
+];
 const Profile = ref({
   'name': "ahmed ahmed",
   'email': "ahmed.ahmed@gmail.com",
