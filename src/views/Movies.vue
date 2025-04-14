@@ -53,12 +53,15 @@
         
 </div>
 </section>
+<section>
+  <GenreSlide :categories="categories" title="Our Categories" subtitle=""></GenreSlide>
+</section>
 </template>
 
 <script setup>
-  import { ref, onMounted, onBeforeUnmount } from 'vue'
+  import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
-  
+import GenreSlide from '../components/GenreSlide.vue';
   const slides = ref([
     {
       id: 1,
@@ -105,6 +108,70 @@ import { useRouter } from 'vue-router'
   const goToMovie = (id)=>{
     router.push(`movie/${id}`)
   }
+  const categories =ref( [
+        {
+          name: 'Action',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Adventure',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Comedy',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Drama',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Horror',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },{
+          name: 'Drama',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+        {
+          name: 'Horror',
+          posters: [
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5',
+            'https://picsum.photos/400/600?random=5'
+          ]
+        },
+      ]);
 
   onBeforeUnmount(() => {
     clearInterval(autoSlideInterval)
