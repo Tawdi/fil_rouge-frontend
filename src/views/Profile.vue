@@ -110,7 +110,85 @@
 
       <!-- Bookings Tab -->
       <div v-if="activeTab === 'bookings'" class="space-y-8">
-
+        <!-- Upcoming Bookings -->
+        <div class="bg-[#1a1a1a] rounded-lg border border-[#333333]">
+          <div class="p-6 border-b border-[#333333]">
+            <h2 class="text-xl font-bold">Upcoming Bookings</h2>
+          </div>
+          <div class="p-6">
+            <div v-if="upcomingBookings.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div v-for="booking in upcomingBookings" :key="booking.id"
+                class="bg-[#262626] rounded-lg overflow-hidden border border-[#333333] hover:border-[#e50000] transition-colors">
+                <div class="relative h-40">
+                  <img :src="booking.movieImage" :alt="booking.movieTitle" class="w-full h-full object-cover" />
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
+                    <h3 class="font-bold text-lg">{{ booking.movieTitle }}</h3>
+                    <p class="text-sm text-[#999999]">{{ booking.cinema }}</p>
+                  </div>
+                </div>
+                <div class="p-4 space-y-3">
+                  <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="#e50000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="lucide lucide-calendar">
+                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                      <line x1="16" x2="16" y1="2" y2="6" />
+                      <line x1="8" x2="8" y1="2" y2="6" />
+                      <line x1="3" x2="21" y1="10" y2="10" />
+                    </svg>
+                    <span>{{ booking.date }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="#e50000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="lucide lucide-clock">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>{{ booking.time }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="#e50000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="lucide lucide-armchair">
+                      <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" />
+                      <path d="M3 11v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z" />
+                      <path d="M5 18v2" />
+                      <path d="M19 18v2" />
+                    </svg>
+                    <span>{{ booking.seats.join(", ") }}</span>
+                  </div>
+                  <div class="pt-3 flex justify-between border-t border-[#333333]">
+                    <button class="text-[#e50000] hover:text-[#ff0707] font-medium transition-colors">
+                      View Ticket
+                    </button>
+                    <button class="text-[#999999] hover:text-white transition-colors">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-center py-10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-ticket mx-auto mb-4 text-[#666666]">
+                <path
+                  d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                <path d="M13 5v2" />
+                <path d="M13 17v2" />
+                <path d="M13 11v2" />
+              </svg>
+              <h3 class="text-xl font-medium mb-2">No Upcoming Bookings</h3>
+              <p class="text-[#999999] mb-4">You don't have any upcoming movie bookings</p>
+              <button
+                class="bg-[#e50000] hover:bg-[#ff0707] text-white font-medium py-2 px-6 rounded-md transition-colors">
+                Book a Movie
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -136,4 +214,25 @@ const passwordInfo = ref({
   new: '',
   confirm: ''
 });
+
+const upcomingBookings = ref([
+  {
+    id: 1,
+    movieTitle: 'Avengers: Endgame',
+    movieImage:  '/images/support.webp',
+    cinema: 'Cineplex Odeon',
+    date: 'April 15, 2023',
+    time: '7:30 PM',
+    seats: ['G12', 'G13']
+  },
+  {
+    id: 2,
+    movieTitle: 'The Batman',
+    movieImage: '/images/support.webp',
+    cinema: 'AMC Theatres',
+    date: 'April 22, 2023',
+    time: '8:00 PM',
+    seats: ['F5', 'F6', 'F7']
+  }
+]);
 </script>
