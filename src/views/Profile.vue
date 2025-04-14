@@ -189,6 +189,52 @@
             </div>
           </div>
         </div>
+
+        <!-- Past Bookings -->
+        <div class="bg-[#1a1a1a] rounded-lg border border-[#333333]">
+          <div class="p-6 border-b border-[#333333]">
+            <h2 class="text-xl font-bold">Booking History</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left text-xs text-[#999999] border-b border-[#333333]">
+                  <th class="px-6 py-3 font-medium">Movie</th>
+                  <th class="px-6 py-3 font-medium">Cinema</th>
+                  <th class="px-6 py-3 font-medium">Date & Time</th>
+                  <th class="px-6 py-3 font-medium">Seats</th>
+                  <th class="px-6 py-3 font-medium">Amount</th>
+                  <th class="px-6 py-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#333333]">
+                <tr v-for="booking in pastBookings" :key="booking.id" class="text-sm">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center">
+                      <img :src="booking.movieImage" :alt="booking.movieTitle"
+                        class="w-10 h-14 object-cover rounded-md mr-3" />
+                      <span>{{ booking.movieTitle }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">{{ booking.cinema }}</td>
+                  <td class="px-6 py-4">{{ booking.date }}<br>{{ booking.time }}</td>
+                  <td class="px-6 py-4">{{ booking.seats.join(", ") }}</td>
+                  <td class="px-6 py-4">${{ booking.amount.toFixed(2) }}</td>
+                  <td class="px-6 py-4">
+                    <div class="flex space-x-2">
+                      <button class="text-[#e50000] hover:underline">View</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="p-4 border-t border-[#333333] flex justify-center">
+            <button class="text-[#999999] hover:text-white transition-colors">
+              Load More
+            </button>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -219,7 +265,7 @@ const upcomingBookings = ref([
   {
     id: 1,
     movieTitle: 'Avengers: Endgame',
-    movieImage:  '/images/support.webp',
+    movieImage: '/images/support.webp',
     cinema: 'Cineplex Odeon',
     date: 'April 15, 2023',
     time: '7:30 PM',
@@ -233,6 +279,48 @@ const upcomingBookings = ref([
     date: 'April 22, 2023',
     time: '8:00 PM',
     seats: ['F5', 'F6', 'F7']
+  }
+]);
+const pastBookings = ref([
+  {
+    id: 1,
+    movieTitle: 'Dune',
+    movieImage: '/images/support.webp',
+    cinema: 'Regal Cinemas',
+    date: 'March 10, 2023',
+    time: '6:45 PM',
+    seats: ['H8', 'H9'],
+    amount: 32.50
+  },
+  {
+    id: 2,
+    movieTitle: 'No Time to Die',
+    movieImage: '/images/support.webp',
+    cinema: 'Landmark Theatres',
+    date: 'February 25, 2023',
+    time: '9:15 PM',
+    seats: ['J10', 'J11'],
+    amount: 30.25
+  },
+  {
+    id: 3,
+    movieTitle: 'Spider-Man: No Way Home',
+    movieImage: '/images/support.webp',
+    cinema: 'Alamo Drafthouse',
+    date: 'February 12, 2023',
+    time: '5:30 PM',
+    seats: ['D15', 'D16'],
+    amount: 35.00
+  },
+  {
+    id: 4,
+    movieTitle: 'Black Widow',
+    movieImage: '/images/support.webp',
+    cinema: 'Cineplex Odeon',
+    date: 'January 28, 2023',
+    time: '7:00 PM',
+    seats: ['E7', 'E8'],
+    amount: 28.75
   }
 ]);
 </script>
