@@ -1,6 +1,6 @@
 <template>
     <div class=""></div>
-    <section class="container  relative w-full h-screen overflow-hidden">
+    <section class="container  relative w-full h-screen overflow-hidden mb-10">
     <!-- Slides -->
     <div
         v-for="(slide, index) in slides"
@@ -53,15 +53,66 @@
         
 </div>
 </section>
-<section>
+<section class=" container rounded-2xl border-2 border-[#333333]">
   <GenreSlide :categories="categories" title="Our Categories" subtitle=""></GenreSlide>
+  <MoviesSlide :movies="movies" title="Trending Now"></MoviesSlide>
 </section>
+<section class="bg-[#141414] text-white py-10 px-4 md:px-10">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold mb-8">Search </h2>
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="Search for a movie..."
+        class="w-full md:w-1/2 px-4 py-2 rounded-md bg-[#1f1f1f] border border-[#333] text-white focus:outline-none focus:ring-2 focus:ring-red-600"
+      />
+
+
+      <select
+        v-model="selectedCategory"
+        class="w-full md:w-1/4 px-4 py-2 rounded-md bg-[#1f1f1f] border border-[#333] text-white focus:outline-none focus:ring-2 focus:ring-red-600"
+      >
+        <option value="">All Categories</option>
+        <option
+          v-for="category in categories"
+          :key="category.id"
+          :value="category.name"
+        >
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="flex  flex-wrap ">
+      <div
+            v-for="movie in filteredMovies"
+            :key="movie.id"
+            class="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-2"
+          >
+            <MovieCard
+              :title="movie.title"
+              :image="movie.image"
+              :id="movie.id"
+              :duration="movie.duration"
+              :rating="movie.rating"
+              :genre="movie.genre"
+              :release-date="movie.releaseDate"
+            />
+          </div>
+    </div>
+  </div>
+</section>
+
 </template>
 
 <script setup>
   import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import GenreSlide from '../components/GenreSlide.vue';
+import MoviesSlide from '../components/MoviesSlide.vue';
+import MovieCard from '../components/MovieCard.vue';
   const slides = ref([
     {
       id: 1,
@@ -108,6 +159,16 @@ import GenreSlide from '../components/GenreSlide.vue';
   const goToMovie = (id)=>{
     router.push(`movie/${id}`)
   }
+
+  const movies = ref([
+  { id:1, title: "KANTARA", image: "https://picsum.photos/400/600?random=1", duration: "1h 57min", rating: 5, genre: "action", releaseDate: "12 Mar 2024" },
+  { id:2, title: "BLADE RUNNER 2049", image: "https://picsum.photos/400/600?random=2", duration: "2h 43min", rating: 5, genre: "sci-fi", releaseDate: "14 Mar 2024" },
+  { id:3, title: "PUSHPA", image: "https://picsum.photos/400/600?random=3", duration: "2h 10min", rating: 4, genre: "action", releaseDate: "16 Mar 2024" },
+  { id:4, title: "ADIPURUSH", image: "https://picsum.photos/400/600?random=4", duration: "1h 45min", rating: 3, genre: "drama", releaseDate: "18 Mar 2024" },
+  { id:5, title: "INCEPTION", image: "https://picsum.photos/400/600?random=5", duration: "2h 28min", rating: 5, genre: "sci-fi", releaseDate: "20 Mar 2024" },
+  { id:6, title: "THE BATMAN", image: "https://picsum.photos/400/600?random=6", duration: "2h 56min", rating: 4, genre: "action", releaseDate: "22 Mar 2024" },
+]);
+
   const categories =ref( [
         {
           name: 'Action',
@@ -176,4 +237,17 @@ import GenreSlide from '../components/GenreSlide.vue';
   onBeforeUnmount(() => {
     clearInterval(autoSlideInterval)
   })
+const searchQuery = ref('')
+const selectedCategory = ref('')
+
+const filteredMovies = computed(() => {
+  return movies.value.filter((movie) => {
+    const matchesCategory =
+      selectedCategory.value === '' || movie.genre.toLowerCase() === selectedCategory.value.toLowerCase()
+    const matchesSearch = movie.title
+      .toLowerCase()
+      .includes(searchQuery.value.toLowerCase())
+    return matchesCategory && matchesSearch
+  })
+})
   </script>
