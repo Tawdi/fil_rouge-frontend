@@ -6,32 +6,66 @@ import Support from '../views/Support.vue'
 import About from '../views/About.vue'
 import Auth from '../views/Auth.vue'
 import MovieDetail from '../views/MoiveInfo.vue';
+import CinemaInfo from '../views/CinemaInfo.vue'
+import Profile from '../views/Profile.vue'
+import SeatsSealection from '../views/SeatsSelection.vue'
 // ===================== cinema admin ================================
-import CinemaAdminDashboard from '../views/cinema_admin/Dashboard.vue' 
+import CinemaAdminDashboard from '../views/cinema_admin/Dashboard.vue'
 // =====================  admin ================================
-import AdminDashboard from '../views/admin/Dashboard.vue'  
+import AdminDashboard from '../views/admin/Dashboard.vue'
+
+// ============ layouts
+import DefaultLayout from '../layouts/DefaultLayout.vue'
+import AdminLayout from '../layouts/AdminLayout.vue'
+import CinemaAdminLayout from '../layouts/CinemaAdminLayout.vue'
+// ============
+
 const router = createRouter({
-  history: createWebHistory(), 
+  history: createWebHistory(),
   routes: [
-    { path: '/connecte', component: Auth },
     // ===============================================================
     // =========================  user  ==============================
     // ===============================================================
-    { path: '/', component: Home },
-    { path: '/movies', component: Movies },
-    { path: '/movie/:id', component: MovieDetail, props: true },
-    { path: '/cinemas', component: Cinemas },
-    { path: '/support', component: Support },
-    { path: '/about', component: About },
+    {
+      path: '/',
+      component: DefaultLayout,
+      children: [
+        { path: '/connecte', component: Auth },
+        { path: '/', component: Home },
+        { path: '/movies', component: Movies },
+        { path: '/movie/:id', component: MovieDetail},
+        { path: '/cinemas', component: Cinemas },
+        { path: '/cinema/:id', component: CinemaInfo},
+        { path: '/support', component: Support },
+        { path: '/about', component: About },
+        { path: '/profile', component: Profile },
+        { path: '/booking/:id', component: SeatsSealection },
+      ]
+    },
+
     // ===============================================================
     // =========================  cinema admin =======================
     // ===============================================================
-    { path: '/admin/cinema', component: CinemaAdminDashboard },
-
+    {
+      path: '/cinema-admin',
+      component: CinemaAdminLayout,
+      children: [
+        { path: 'dashboard', component: CinemaAdminDashboard },
+        
+      ]
+    },
     // ===============================================================
     // =========================  super admin ========================
     // ===============================================================
-    { path: '/admin/', component: AdminDashboard },
+    {
+      path: '/admin',
+      component: AdminLayout,
+      children: [
+        { path: 'dashboard', component: AdminDashboard },
+       
+      ]
+    },
+
   ],
 });
 
