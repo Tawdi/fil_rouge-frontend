@@ -17,8 +17,8 @@
             </button>
           </div>
           <div class="flex-1 text-center md:text-left">
-            <h1 class="text-3xl font-bold mb-2"></h1>
-            <p class="text-[#999999] mb-4">{{ Profile.email }}</p>
+            <h1 class="text-3xl font-bold mb-2">{{ Profile.name }}</h1>
+            <p class="text-[#999999] mb-4">{{ Profile.profile_image }}</p>
             <p class="text-[#999999] mb-4">Member since {{ Profile.created_at }}</p>
           </div>
         </div>
@@ -65,6 +65,7 @@
 
                 <div class="flex justify-end">
                   <button type="submit"
+                  @click="updateProfile"
                     class="bg-[#e50000] hover:bg-[#ff0707] text-white font-medium py-2 px-6 rounded-md transition-colors">
                     Save Changes
                   </button>
@@ -77,22 +78,30 @@
             <div class="p-6 border-b border-[#333333]">
               <h2 class="text-xl font-bold">Password & Security</h2>
             </div>
+            <div class="px-6">
+              <div v-if="changePassword_success" class="text-green-500 mb-4">
+              {{ changePassword_success }}
+              </div>
+              <div v-if="changePassword_error" class="text-red-500 mb-4">
+                {{ changePassword_error }}
+              </div>
+            </div>
             <div class="p-6">
               <form @submit.prevent="changePassword">
                 <div class="space-y-4 mb-6">
                   <div>
                     <label class="block text-sm font-medium text-[#999999] mb-2">Current Password</label>
-                    <input type="password" v-model="passwordInfo.current"
+                    <input type="password" v-model="passwordForm.current_password"
                       class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
                   </div>
                   <div>
-                    <label class="block text-sm font-medium text-[#999999] mb-2">New Password</label>
-                    <input type="password" v-model="passwordInfo.new"
+                    <label class="block text-sm font-medium text-[#999999] mb-2">New Password </label>
+                    <input type="password" v-model="passwordForm.new_password"
                       class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-[#999999] mb-2">Confirm New Password</label>
-                    <input type="password" v-model="passwordInfo.confirm"
+                    <input type="password" v-model="passwordForm.new_password_confirmation"
                       class="w-full bg-[#262626] border border-[#333333] rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#e50000]" />
                   </div>
                 </div>
@@ -242,25 +251,78 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
+import { onMounted, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import axios from '@/utils/axios';
+const auth = useAuthStore()
+const changePassword_success = ref('');
+const changePassword_error = ref('');
 const activeTab = ref('personal');
 const tabs = [
   { id: 'personal', name: 'Personal Information' },
   { id: 'bookings', name: 'My Bookings' },
 ];
+
 const Profile = ref({
-  'name': "ahmed ahmed",
-  'email': "ahmed.ahmed@gmail.com",
-  'image': "/images/support.webp",
-  'created_at': "April 2024"
-});
-const passwordInfo = ref({
-  current: '',
-  new: '',
-  confirm: ''
+  'name': "",
+  'email': "",
+  'profile_image': "",
+  'created_at': ""
 });
 
+onMounted(() => {
+  if (auth.user) {
+    Profile.value.name = auth.user.name;
+    Profile.value.email = auth.user.email;
+    Profile.value.image = auth.user.profile_image ?? "/images/support.webp" ;
+    Profile.value.created_at = new Date(auth.user.created_at).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+    });
+  }
+});
+
+const updateProfile = async () => {
+  try {
+    const response = await axios.put('/user/profile', Profile.value);
+    auth.user = response.data.user;
+    localStorage.setItem('user', JSON.stringify(auth.user));  // Update local storage
+    alert('Profile updated successfully!');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    alert('Failed to update profile');
+  }
+};
+
+const passwordForm = ref({
+  current_password: '',
+  new_password: '',
+  new_password_confirmation: ''
+});
+
+const changePassword = async () => {
+  if (passwordForm.value.new_password !== passwordForm.value.new_password_confirmation) {
+    changePassword_error.value = 'New password and confirm password do not match';
+    return;
+  }
+
+  try {
+    const response = await axios.post('/password/change', {
+      current_password: passwordForm.value.current_password,
+      new_password: passwordForm.value.new_password,
+      new_password_confirmation: passwordForm.value.new_password_confirmation
+    });
+
+    changePassword_success.value = response.data.message;
+    changePassword_error.value = ''; 
+    passwordForm.value = { current_password: '', new_password: '', new_password_confirmation: '' };
+
+  } catch (error) {
+    console.error('Error changing password:', error);
+    changePassword_error.value = error.response?.data?.message || 'An error occurred while changing the password';
+    changePassword_success.value = '';  
+  }
+};
 const upcomingBookings = ref([
   {
     id: 1,
