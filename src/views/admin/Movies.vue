@@ -151,8 +151,18 @@ const editMovie = (movie) => {
   currentMovie.value = { ...movie };
   showEditMovieModal.value = true;
 };
-const deleteMovie = () => {
-  showDeleteModal.value = false;
-  currentMovie.value = null;
+const deleteMovie = async () => {
+
+  if (currentMovie.value) {
+    try {
+      await axios.delete(`/admin/movies/${currentMovie.value.id}`);
+      const response = await axios.get("/admin/movies");
+      movies.value = response.data.data;
+      showDeleteModal.value = false;
+      currentMovie.value = null;
+    } catch (error) {
+      console.error("Error deleting movie:", error);
+    }
+  }
 };
 </script>
