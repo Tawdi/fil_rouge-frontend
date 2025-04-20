@@ -66,7 +66,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
       >
         <MovieCard
-          v-for="movie in filteredMovies"
+          v-for="movie in movies"
           :key="movie.id"
           :movie="movie"
           @edit="editMovie(movie)"
@@ -83,17 +83,27 @@
     @close="closeModals"
     @save="saveMovie"
   />
+  <!-- Delete Confirmation Modal -->
+  <ConfirmationModal
+    v-if="showDeleteModal"
+    :title="`Delete ${currentMovie?.title}`"
+    :message="`Are you sure you want to delete ' ${currentMovie?.title} ' ? This action cannot be undone.`"
+    @confirm="deleteMovie"
+    @cancel="showDeleteModal = false"
+  />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import MovieCard from "@/components/admin/MovieCard.vue";
 import MovieFormModal from "@/components/admin/MovieFormModal.vue";
+import ConfirmationModal from "@/components/admin/ConfirmationModal.vue";
 
 const movies = ref([]);
 const searchQuery = ref("");
 const showAddMovieModal = ref(false);
 const showEditMovieModal = ref(false);
+const showDeleteModal = ref(false);
 const currentMovie = ref(null);
 
 onMounted(() => {
@@ -101,13 +111,26 @@ onMounted(() => {
 });
 
 const saveMovie = (movie) => {
-    closeModals();
+  closeModals();
 };
 
 const closeModals = () => {
-    showAddMovieModal.value = false;
-    showEditMovieModal.value = false;
-    currentMovie.value = null;
-  };
-  
+  showAddMovieModal.value = false;
+  showEditMovieModal.value = false;
+  currentMovie.value = null;
+};
+
+const confirmDeleteMovie = (movie) => {
+  currentMovie.value = movie;
+  showDeleteModal.value = true;
+};
+
+const editMovie = (movie) => {
+  currentMovie.value = { ...movie };
+  showEditMovieModal.value = true;
+};
+const deleteMovie = () => {
+  showDeleteModal.value = false;
+  currentMovie.value = null;
+};
 </script>
