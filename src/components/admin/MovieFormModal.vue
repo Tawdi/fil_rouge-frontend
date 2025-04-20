@@ -18,9 +18,9 @@
             <!-- Left Column -->
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-[#999999] mb-1">Title</label>
+                <label class="block text-sm font-medium text-[#999999] mb-1">Titre</label>
                 <input 
-                  v-model="form.title"
+                  v-model="form.titre"
                   type="text" 
                   required
                   class="bg-[#262626] border border-[#333333] rounded-md py-2 px-3 text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#e50000]"
@@ -114,7 +114,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-[#999999] mb-1">Genre</label>
-               <select class="bg-[#262626] border border-[#333333] rounded-md py-2 px-3 text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#e50000]">
+               <select v-model="form.genre_id" class="bg-[#262626] border border-[#333333] rounded-md py-2 px-3 text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#e50000]">
 
                 <option v-for="genre in availableGenres" :key="genre.id" :value="genre.id" 
                 >{{ genre.name }}</option>
@@ -156,7 +156,7 @@
   
   <script setup>
   import { ref, defineProps, defineEmits, onMounted } from 'vue';
-  
+  import axios from "@/utils/axios";
   const emit = defineEmits(['close', 'save']);
   
   const props = defineProps({
@@ -170,16 +170,9 @@
     }
   });
 
-  const availableGenres = [
-   {id:1 , name:'Action' },
-   {id:2 , name:'Adventure' },
-   {id:3 , name:'Comedy' },
-   {id:4 , name:'Mystery' },
-   {id:5 , name:'Romance' },
-   {id:6 , name:'Documentary' },
-  ];
+  const availableGenres = ref([]);
   const defaultForm = {
-    title: '',
+    titre: '',
     director: '',
     actors: '',
     release_date: '',
@@ -188,16 +181,19 @@
     poster: '',
     background:'',
     trailer:'',
-    genre:'',
+    genre_id:'',
     description: ''
   };
   
   const form = ref({ ...defaultForm });
   
-  onMounted(() => {
+  onMounted( async () => {
+    const response = await axios.get("/admin/genres");
+    availableGenres.value = response.data
     if (props.movie) {
       form.value = { ...props.movie };
     }
+
   });
   const handleSubmit = () => {
     emit('save', { ...form.value });

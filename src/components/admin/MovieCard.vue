@@ -4,7 +4,7 @@
       <div class="relative">
         <img 
           :src="movie.poster" 
-          :alt="movie.title" 
+          :alt="movie.titre" 
           class="w-full h-64 object-cover"
         />
         <div class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md">
@@ -13,7 +13,7 @@
         <div 
           class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4"
         >
-          <h3 class="font-bold text-lg truncate">{{ movie.title }}</h3>
+          <h3 class="font-bold text-lg truncate">{{ movie.titre }}</h3>
           <p class="text-xs text-[#999999]">{{ movie.release_date }}</p>
           <p class="text-xs text-[#999999]">by {{ movie.director }}</p>
         </div>
@@ -24,7 +24,7 @@
         <div class="flex items-center gap-4 mb-2">
           <div class="flex items-center bg-[#262626]  px-2 py-1 rounded-md">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#e5b000" stroke="#e5b000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star mr-1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span class="text-xs font-medium">{{ movie.rating.toFixed(1) }}</span>
+            <span class="text-xs font-medium">{{ movie.rating }}</span>
           </div>
           <span 
             class="px-2 py-1 text-xs bg-[#262626] rounded-md"
