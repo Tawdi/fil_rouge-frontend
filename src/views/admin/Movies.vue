@@ -1,8 +1,6 @@
 <template>
   <!-- Main Content -->
   <div class="flex-1 flex flex-col overflow-hidden">
-    <DashboardHeader />
-
     <main class="flex-1 overflow-y-auto p-6">
       <div class="mb-6 flex justify-between items-center">
         <div>
@@ -77,16 +75,39 @@
       </div>
     </main>
   </div>
+  <!-- Add/Edit Movie Modal -->
+  <MovieFormModal
+    v-if="showAddMovieModal || showEditMovieModal"
+    :movie="currentMovie"
+    :is-edit="showEditMovieModal"
+    @close="closeModals"
+    @save="saveMovie"
+  />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import MovieCard from "../../components/admin/MovieCard.vue";
+import MovieCard from "@/components/admin/MovieCard.vue";
+import MovieFormModal from "@/components/admin/MovieFormModal.vue";
 
 const movies = ref([]);
 const searchQuery = ref("");
 const showAddMovieModal = ref(false);
+const showEditMovieModal = ref(false);
+const currentMovie = ref(null);
+
 onMounted(() => {
   movies.value = [];
 });
+
+const saveMovie = (movie) => {
+    closeModals();
+};
+
+const closeModals = () => {
+    showAddMovieModal.value = false;
+    showEditMovieModal.value = false;
+    currentMovie.value = null;
+  };
+  
 </script>
