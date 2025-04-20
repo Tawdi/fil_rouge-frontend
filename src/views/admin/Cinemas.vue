@@ -81,12 +81,21 @@
     @close="closeModals"
     @save="saveCinema"
   />
+  <!-- Delete Confirmation Modal -->
+  <ConfirmationModal
+    v-if="showDeleteModal"
+    :title="`Delete ${currentCinema?.name}`"
+    :message="`Are you sure you want to delete ' ${currentCinema?.name} ' ? This action cannot be undone.`"
+    @confirm="deleteCinema"
+    @cancel="showDeleteModal = false"
+  />
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import CinemaCard from "@/components/admin/CinemaCard.vue";
 import CinemaFormModal from "@/components/admin/CinemaFormModal.vue";
+import ConfirmationModal from "@/components/admin/ConfirmationModal.vue";
 import axios from "@/utils/axios";
 
 const cinemas = ref([]);
@@ -94,6 +103,7 @@ const loading = ref(true);
 const searchQuery = ref("");
 const showAddCinemaModal = ref(false);
 const showEditCinemaModal = ref(false);
+const showDeleteModal = ref(false);
 const currentCinema = ref(null);
 onMounted(async () => {
   try {
@@ -111,24 +121,28 @@ const editCinema = (cinema) => {
   showEditCinemaModal.value = true;
 };
 
+const confirmDeleteCinema = (cinema) => {
+  currentCinema.value = cinema;
+  showDeleteModal.value = true;
+};
+
 const closeModals = () => {
   showAddCinemaModal.value = false;
   showEditCinemaModal.value = false;
   currentCinema.value = null;
 };
 
-
 const saveCinema = async (cinemaData) => {
   try {
     if (showEditCinemaModal.value) {
       await axios.put(`/admin/cinemas/${cinemaData.id}`, cinemaData);
-      const index = cinemas.value.findIndex(c => c.id === cinemaData.id);
+      const index = cinemas.value.findIndex((c) => c.id === cinemaData.id);
       if (index !== -1) {
         cinemas.value[index] = { ...cinemaData };
       }
     } else {
       const response = await axios.post("/admin/cinemas", cinemaData);
-      cinemas.value.push(response.data); 
+      cinemas.value.push(response.data);
     }
 
     closeModals();
@@ -137,4 +151,18 @@ const saveCinema = async (cinemaData) => {
   }
 };
 
+const deleteCinema = async () => {
+  if (currentCinema.value) {
+    try {
+      await axios.delete(`/admin/cinemas/${currentCinema.value.id}`);
+      cinemas.value = cinemas.value.filter(
+        (c) => c.id !== currentCinema.value.id
+      );
+      showDeleteModal.value = false;
+      currentCinema.value = null;
+    } catch (error) {
+      console.error("Error deleting cinema:", error);
+    }
+  }
+};
 </script>
