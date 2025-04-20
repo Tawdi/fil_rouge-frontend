@@ -99,6 +99,8 @@ import MovieCard from "@/components/admin/MovieCard.vue";
 import MovieFormModal from "@/components/admin/MovieFormModal.vue";
 import ConfirmationModal from "@/components/admin/ConfirmationModal.vue";
 
+import axios from "@/utils/axios";
+
 const movies = ref([]);
 const searchQuery = ref("");
 const showAddMovieModal = ref(false);
@@ -106,12 +108,32 @@ const showEditMovieModal = ref(false);
 const showDeleteModal = ref(false);
 const currentMovie = ref(null);
 
-onMounted(() => {
-  movies.value = [];
+onMounted(async () => {
+  try {
+    const response = await axios.get("/admin/movies");
+    movies.value = response.data.data;
+  } catch (error) {
+    console.error("Error fetching movies:", error);
+  }
 });
 
-const saveMovie = (movie) => {
-  closeModals();
+const saveMovie = async (movieData) => {
+  try {
+    if (showEditMovieModal.value) {
+      await axios.put(`/admin/movies/${movieData.id}`, movieData);
+      const index = movies.value.findIndex((c) => c.id === movieData.id);
+      const response = await axios.get("/admin/movies");
+      movies.value = response.data.data;
+    } else {
+      const responseAdd = await axios.post("/admin/movies", movieData);
+      const response = await axios.get("/admin/movies");
+      movies.value = response.data.data;
+    }
+
+    closeModals();
+  } catch (error) {
+    console.error("Error saving movie:", error);
+  }
 };
 
 const closeModals = () => {
