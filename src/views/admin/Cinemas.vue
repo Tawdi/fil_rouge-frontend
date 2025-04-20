@@ -69,7 +69,6 @@
           :cinema="cinema"
           @edit="editCinema(cinema)"
           @delete="confirmDeleteCinema(cinema)"
-          @view-screens="viewScreens(cinema)"
         />
       </div>
     </main>
@@ -79,10 +78,21 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import CinemaCard from "@/components/admin/CinemaCard.vue";
+import axios from "@/utils/axios";
 
 const cinemas = ref([]);
+const loading = ref(true);
+const searchQuery = ref('');
+const showAddCinemaModal = ref(false);
 
-onMounted(() => {
-  cinemas.value = [];
+onMounted(async () => {
+  try {
+    const response = await axios.get('/admin/cinemas');
+    cinemas.value = response.data.data; 
+  } catch (error) {
+    console.error('Error fetching cinemas:', error);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
