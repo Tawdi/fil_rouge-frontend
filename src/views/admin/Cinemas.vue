@@ -73,26 +73,47 @@
       </div>
     </main>
   </div>
+  <!-- Add/Edit Cinema Modal -->
+  <CinemaFormModal
+    v-if="showAddCinemaModal || showEditCinemaModal"
+    :cinema="currentCinema"
+    :is-edit="showEditCinemaModal"
+    @close="closeModals"
+    @save="saveCinema"
+  />
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import CinemaCard from "@/components/admin/CinemaCard.vue";
+import CinemaFormModal from "@/components/admin/CinemaFormModal.vue";
 import axios from "@/utils/axios";
 
 const cinemas = ref([]);
 const loading = ref(true);
-const searchQuery = ref('');
+const searchQuery = ref("");
 const showAddCinemaModal = ref(false);
-
+const showEditCinemaModal = ref(false);
+const currentCinema = ref(null);
 onMounted(async () => {
   try {
-    const response = await axios.get('/admin/cinemas');
-    cinemas.value = response.data.data; 
+    const response = await axios.get("/admin/cinemas");
+    cinemas.value = response.data.data;
   } catch (error) {
-    console.error('Error fetching cinemas:', error);
+    console.error("Error fetching cinemas:", error);
   } finally {
     loading.value = false;
   }
 });
+
+const editCinema = (cinema) => {
+  currentCinema.value = { ...cinema };
+  showEditCinemaModal.value = true;
+};
+
+const closeModals = () => {
+  showAddCinemaModal.value = false;
+  showEditCinemaModal.value = false;
+  currentCinema.value = null;
+};
 </script>

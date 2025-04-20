@@ -18,7 +18,7 @@
       <form @submit.prevent="handleSubmit" class="p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Left Column -->
-          <div class="space-y-4">
+
             <div>
               <label class="block text-sm font-medium text-[#999999] mb-1">Cinema Name</label>
               <input v-model="form.name" type="text" required
@@ -29,10 +29,8 @@
               <input v-model="form.address" type="text" required
                 class="bg-[#262626] border border-[#333333] rounded-md py-2 px-3 text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#e50000]" />
             </div>
-          </div>
 
-          <!-- Right Column -->
-          <div class="space-y-4">
+          <div v-if="!isEdit" class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-[#999999] mb-1">Email</label>
               <input v-model="form.email" type="email" required
