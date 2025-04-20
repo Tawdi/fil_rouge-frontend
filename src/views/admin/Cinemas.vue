@@ -116,4 +116,25 @@ const closeModals = () => {
   showEditCinemaModal.value = false;
   currentCinema.value = null;
 };
+
+
+const saveCinema = async (cinemaData) => {
+  try {
+    if (showEditCinemaModal.value) {
+      await axios.put(`/admin/cinemas/${cinemaData.id}`, cinemaData);
+      const index = cinemas.value.findIndex(c => c.id === cinemaData.id);
+      if (index !== -1) {
+        cinemas.value[index] = { ...cinemaData };
+      }
+    } else {
+      const response = await axios.post("/admin/cinemas", cinemaData);
+      cinemas.value.push(response.data); 
+    }
+
+    closeModals();
+  } catch (error) {
+    console.error("Error saving cinema:", error);
+  }
+};
+
 </script>
