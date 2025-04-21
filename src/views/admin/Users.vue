@@ -214,6 +214,11 @@ import userService from '@/services/userService';
 import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
 import UserDetailsModal from '@/components/admin/UserDetailsModal.vue';
 import UserFormModal from '@/components/admin/UserFormModal.vue';
+
+import { useNotificationStore } from '@/stores/notificationStore';
+const notificationStore = useNotificationStore();
+
+
 const users =ref([]);
 const showEditUserModal = ref(false);
 const showUserDetailsModal = ref(false);
@@ -270,9 +275,17 @@ const formatDate = (dateString) => {
 const suspendUser = async () => {
   try {
     await userService.changeUserStatus(currentUser.value.id, 'suspended');
-    currentUser.value.status = 'Suspended';
+    currentUser.value.status = 'suspended';
     showSuspendModal.value = false;
+    notificationStore.pushNotification({
+      message: `User ${currentUser.value.name} suspended successfully.`,
+      type: 'success',
+    });
   } catch (error) {
+    notificationStore.pushNotification({
+      message: `Failed to suspend user.`,
+      type: 'error',
+    });
     console.error("Error suspending user:", error);
   }
 };
@@ -280,9 +293,17 @@ const suspendUser = async () => {
 const activateUser = async (user) => {
   try {
     await userService.changeUserStatus(user.id, 'active');
-    user.status = 'Active';
+    user.status = 'active';
+    notificationStore.pushNotification({
+      message: `User ${user.name} activated successfully.`,
+      type: 'success',
+    });
   } catch (error) {
     console.error("Error activating user:", error);
+    notificationStore.pushNotification({
+      message: `Failed to activate user.`,
+      type: 'error',
+    });
   }
 };
 
@@ -314,8 +335,16 @@ const deleteUser = async () => {
     await userService.deleteUser(currentUser.value.id);
     users.value = users.value.filter(u => u.id !== currentUser.value.id);
     showDeleteModal.value = false;
+    notificationStore.pushNotification({
+      message: `User ${currentUser.value.name} deleted successfully.`,
+      type: 'success',
+    });
   } catch (error) {
     console.error("Error deleting user:", error);
+    notificationStore.pushNotification({
+      message: `Failed to delete user.`,
+      type: 'error',
+    });
   }
 };
 
@@ -323,14 +352,26 @@ const saveUser = async (userData) => {
   try {
     if (showEditUserModal.value) {
       await userService.updateUser(currentUser.value.id, userData);
+      notificationStore.pushNotification({
+        message: `User ${userData.name} updated successfully.`,
+        type: 'success',
+      });
     } else {
       await userService.createUser(userData);
+      notificationStore.pushNotification({
+        message: `User ${userData.name} created successfully.`,
+        type: 'success',
+      });
     }
     const response = await userService.getUsers();
     users.value = response.data.data;
     closeUserForm();
   } catch (error) {
     console.error("Error saving user:", error);
+    notificationStore.pushNotification({
+      message: `Failed to save user.`,
+      type: 'error',
+    });
   }
 };
 
