@@ -91,21 +91,21 @@
                 <td class="px-4 py-3">
                   <span :class="[
                     'px-2 py-1 text-xs rounded-md',
-                    user.role === 'Admin'
+                    user.role === 'super_admin'
                       ? 'bg-purple-900/30 text-purple-500'
-                      : user.role === 'Staff'
+                      : user.role === 'cinema_admin'
                         ? 'bg-blue-900/30 text-blue-500'
                         : 'bg-gray-900/30 text-gray-500',
                   ]">
-                    {{ user.role }}
+                    {{ user.role === 'super_admin' ? 'Admin' : user.role === 'cinema_admin' ? 'Cinema Admin' : 'Customer' }}
                   </span>
                 </td>
                 <td class="px-4 py-3">
                   <span :class="[
                     'px-2 py-1 text-xs rounded-full',
-                    user.status === 'Active'
+                    user.status === 'active'
                       ? 'bg-green-900/30 text-green-500'
-                      : user.status === 'Inactive'
+                      : user.status === 'suspended'
                         ? 'bg-yellow-900/30 text-yellow-500'
                         : 'bg-red-900/30 text-red-500',
                   ]">
@@ -188,7 +188,48 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import axios from '@/utils/axios';
 
 const users =ref([]);
+
+onMounted( async ()=>{
+  try {
+    const response = await axios.get("/admin/users");
+    users.value = response.data.data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
+})
+
+const getUserInitials = (name) => {
+  if (!name) return '';
+  
+  const nameParts = name.split(' ');
+  if (nameParts.length === 1) {
+    return nameParts[0].charAt(0).toUpperCase();
+  }
+  
+  return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'Never';
+  
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) {
+    return 'Today';
+  } else if (diffDays === 1) {
+    return 'Yesterday';
+  } else if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  } else {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+  }
+};
 </script>
