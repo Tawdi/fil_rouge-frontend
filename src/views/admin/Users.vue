@@ -185,22 +185,56 @@
     :message="`Are you sure you want to delete ${currentUser?.name}? This action cannot be undone.`"
     confirm-text="Delete" confirm-class="bg-red-600 hover:bg-red-700" @confirm="deleteUser"
     @cancel="showDeleteModal = false" />
+
+  <!-- Add/Edit User Modal -->
+  <UserFormModal
+    v-if="showAddUserModal || showEditUserModal"
+    :user="showEditUserModal ? currentUser : null"
+    :is-edit="showEditUserModal"
+    @close="closeUserForm"
+    @save="saveUser"
+  />
+
+  <!-- User Details Modal -->
+  <UserDetailsModal
+    v-if="showUserDetailsModal"
+    :user="currentUser"
+    @close="showUserDetailsModal = false"
+    @edit="editUser"
+    @suspend="confirmSuspendUser"
+    @activate="activateUser"
+    @delete="confirmDeleteUser"
+  />
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import axios from '@/utils/axios';
+import { onMounted,computed, ref } from 'vue';
 
+import userService from '@/services/userService';
+import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
+import UserDetailsModal from '@/components/admin/UserDetailsModal.vue';
+import UserFormModal from '@/components/admin/UserFormModal.vue';
 const users =ref([]);
+const showEditUserModal = ref(false);
+const showUserDetailsModal = ref(false);
+const showDeleteModal = ref(false);
+const showAddUserModal = ref(false);
+const showSuspendModal = ref(false);
+const searchQuery = ref('');
+const dateFilter = ref('');
+const roleFilter = ref('');
+const statusFilter = ref('');
+const currentUser = ref(null);
 
-onMounted( async ()=>{
+onMounted(async () => {
   try {
-    const response = await axios.get("/admin/users");
+    const response = await userService.getUsers();
     users.value = response.data.data;
   } catch (error) {
     console.error("Error fetching users:", error);
   }
-})
+});
+
 
 const getUserInitials = (name) => {
   if (!name) return '';
@@ -232,4 +266,78 @@ const formatDate = (dateString) => {
     return date.toLocaleDateString(undefined, options);
   }
 };
+
+const suspendUser = async () => {
+  try {
+    await userService.changeUserStatus(currentUser.value.id, 'suspended');
+    currentUser.value.status = 'Suspended';
+    showSuspendModal.value = false;
+  } catch (error) {
+    console.error("Error suspending user:", error);
+  }
+};
+
+const activateUser = async (user) => {
+  try {
+    await userService.changeUserStatus(user.id, 'active');
+    user.status = 'Active';
+  } catch (error) {
+    console.error("Error activating user:", error);
+  }
+};
+
+const confirmSuspendUser = (user) => {
+  currentUser.value = user;
+  showSuspendModal.value = true;
+  showUserDetailsModal.value = false;
+};
+
+  
+const viewUserDetails = (user) => {
+    currentUser.value = user;
+    showUserDetailsModal.value = true;
+  };
+  
+const editUser = (user) => {
+  currentUser.value = user;
+  showEditUserModal.value = true;
+  showUserDetailsModal.value = false;
+};
+const confirmDeleteUser = (user) => {
+  currentUser.value = user;
+  showDeleteModal.value = true;
+  showUserDetailsModal.value = false;
+};
+
+const deleteUser = async () => {
+  try {
+    await userService.deleteUser(currentUser.value.id);
+    users.value = users.value.filter(u => u.id !== currentUser.value.id);
+    showDeleteModal.value = false;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+  }
+};
+
+const saveUser = async (userData) => {
+  try {
+    if (showEditUserModal.value) {
+      await userService.updateUser(currentUser.value.id, userData);
+    } else {
+      await userService.createUser(userData);
+    }
+    const response = await userService.getUsers();
+    users.value = response.data.data;
+    closeUserForm();
+  } catch (error) {
+    console.error("Error saving user:", error);
+  }
+};
+
+const closeUserForm = () => {
+  showAddUserModal.value = false;
+  showEditUserModal.value = false;
+  currentUser.value = null;
+};
+
 </script>
