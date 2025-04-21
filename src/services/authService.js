@@ -14,5 +14,10 @@ export default {
   async getUser() {
     const responce = await axios.get('/auth/me')
     return responce.data
-  }
+  },
+
+  async refreshToken() {
+    const { data } = await axios.post('/auth/refresh-token')
+    return data
+  },
 }

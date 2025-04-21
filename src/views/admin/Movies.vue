@@ -99,7 +99,9 @@ import MovieCard from "@/components/admin/MovieCard.vue";
 import MovieFormModal from "@/components/admin/MovieFormModal.vue";
 import ConfirmationModal from "@/components/admin/ConfirmationModal.vue";
 
-import axios from "@/utils/axios";
+import { useNotificationStore } from "@/stores/notificationStore";
+import movieService from "@/services/movieService";
+const notificationStore = useNotificationStore();
 
 const movies = ref([]);
 const searchQuery = ref("");
@@ -108,31 +110,44 @@ const showEditMovieModal = ref(false);
 const showDeleteModal = ref(false);
 const currentMovie = ref(null);
 
-onMounted(async () => {
+const fetchMovies = async () => {
   try {
-    const response = await axios.get("/admin/movies");
+    const response = await movieService.getMovies();
     movies.value = response.data.data;
   } catch (error) {
     console.error("Error fetching movies:", error);
+    notificationStore.pushNotification({
+      message: "Erreur lors du chargement des films.",
+      type: "error",
+    });
   }
-});
+};
+
+onMounted(fetchMovies);
 
 const saveMovie = async (movieData) => {
   try {
     if (showEditMovieModal.value) {
-      await axios.put(`/admin/movies/${movieData.id}`, movieData);
-      const index = movies.value.findIndex((c) => c.id === movieData.id);
-      const response = await axios.get("/admin/movies");
-      movies.value = response.data.data;
+      await movieService.updateMovie(movieData.id, movieData);
+      notificationStore.pushNotification({
+        message: `Film "${movieData.titre}" modifié avec succès.`,
+        type: "success",
+      });
     } else {
-      const responseAdd = await axios.post("/admin/movies", movieData);
-      const response = await axios.get("/admin/movies");
-      movies.value = response.data.data;
+      await movieService.createMovie(movieData);
+      notificationStore.pushNotification({
+        message: `Film "${movieData.titre}" ajouté avec succès.`,
+        type: "success",
+      });
     }
-
+    await fetchMovies();
     closeModals();
   } catch (error) {
     console.error("Error saving movie:", error);
+    notificationStore.pushNotification({
+      message: "Échec de l'enregistrement du film.",
+      type: "error",
+    });
   }
 };
 
@@ -151,18 +166,25 @@ const editMovie = (movie) => {
   currentMovie.value = { ...movie };
   showEditMovieModal.value = true;
 };
-const deleteMovie = async () => {
 
-  if (currentMovie.value) {
-    try {
-      await axios.delete(`/admin/movies/${currentMovie.value.id}`);
-      const response = await axios.get("/admin/movies");
-      movies.value = response.data.data;
-      showDeleteModal.value = false;
-      currentMovie.value = null;
-    } catch (error) {
-      console.error("Error deleting movie:", error);
-    }
+const deleteMovie = async () => {
+  if (!currentMovie.value) return;
+  try {
+    await movieService.deleteMovie(currentMovie.value.id);
+    notificationStore.pushNotification({
+      message: `Film "${currentMovie.value.titre}" supprimé avec succès.`,
+      type: "success",
+    });
+
+    await fetchMovies();
+    showDeleteModal.value = false;
+    currentMovie.value = null;
+  } catch (error) {
+    console.error("Error deleting movie:", error);
+    notificationStore.pushNotification({
+      message: "Échec de la suppression du film.",
+      type: "error",
+    });
   }
 };
 </script>
