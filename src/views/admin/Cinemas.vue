@@ -96,7 +96,12 @@ import { ref, onMounted } from "vue";
 import CinemaCard from "@/components/admin/CinemaCard.vue";
 import CinemaFormModal from "@/components/admin/CinemaFormModal.vue";
 import ConfirmationModal from "@/components/admin/ConfirmationModal.vue";
-import axios from "@/utils/axios";
+
+import { useNotificationStore } from "@/stores/notificationStore";
+import cinemaService from "@/services/cinemaService";
+
+const notificationStore = useNotificationStore();
+
 
 const cinemas = ref([]);
 const loading = ref(true);
@@ -105,16 +110,24 @@ const showAddCinemaModal = ref(false);
 const showEditCinemaModal = ref(false);
 const showDeleteModal = ref(false);
 const currentCinema = ref(null);
-onMounted(async () => {
+
+const fetchCinemas = async () => {
+  loading.value = true;
   try {
-    const response = await axios.get("/admin/cinemas");
+    const response = await cinemaService.getCinemas();
     cinemas.value = response.data.data;
   } catch (error) {
     console.error("Error fetching cinemas:", error);
+    notificationStore.pushNotification({
+      message: "Erreur lors du chargement des cinémas.",
+      type: "error",
+    });
   } finally {
     loading.value = false;
   }
-});
+};
+
+onMounted(fetchCinemas);
 
 const editCinema = (cinema) => {
   currentCinema.value = { ...cinema };
@@ -135,34 +148,49 @@ const closeModals = () => {
 const saveCinema = async (cinemaData) => {
   try {
     if (showEditCinemaModal.value) {
-      await axios.put(`/admin/cinemas/${cinemaData.id}`, cinemaData);
-      const index = cinemas.value.findIndex((c) => c.id === cinemaData.id);
-      if (index !== -1) {
-        cinemas.value[index] = { ...cinemaData };
-      }
+      await cinemaService.updateCinema(cinemaData.id, cinemaData);
+      notificationStore.pushNotification({
+        message: `Cinéma "${cinemaData.name}" mis à jour.`,
+        type: "success",
+      });
     } else {
-      const response = await axios.post("/admin/cinemas", cinemaData);
-      cinemas.value.push(response.data);
+      await cinemaService.createCinema(cinemaData);
+      notificationStore.pushNotification({
+        message: `Cinéma "${cinemaData.name}" ajouté.`,
+        type: "success",
+      });
     }
 
+    await fetchCinemas();
     closeModals();
   } catch (error) {
     console.error("Error saving cinema:", error);
+    notificationStore.pushNotification({
+      message: "Échec de l'enregistrement du cinéma.",
+      type: "error",
+    });
   }
 };
 
 const deleteCinema = async () => {
-  if (currentCinema.value) {
-    try {
-      await axios.delete(`/admin/cinemas/${currentCinema.value.id}`);
-      cinemas.value = cinemas.value.filter(
-        (c) => c.id !== currentCinema.value.id
-      );
-      showDeleteModal.value = false;
-      currentCinema.value = null;
-    } catch (error) {
-      console.error("Error deleting cinema:", error);
-    }
+  if (!currentCinema.value) return;
+
+  try {
+    await cinemaService.deleteCinema(currentCinema.value.id);
+    notificationStore.pushNotification({
+      message: `Cinéma "${currentCinema.value.name}" supprimé.`,
+      type: "success",
+    });
+
+    await fetchCinemas();
+    showDeleteModal.value = false;
+    currentCinema.value = null;
+  } catch (error) {
+    console.error("Error deleting cinema:", error);
+    notificationStore.pushNotification({
+      message: "Échec de la suppression du cinéma.",
+      type: "error",
+    });
   }
 };
 </script>
