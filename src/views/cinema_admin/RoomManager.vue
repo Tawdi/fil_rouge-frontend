@@ -38,6 +38,37 @@
           </div>
         </div>
 
+        <!-- Step Indicator -->
+        <div v-if="!showRoomList" class="mb-6">
+          <div class="flex items-center">
+            <div 
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-[#e50000] text-white font-bold"
+            >
+              {{ currentStep }}
+            </div>
+            <div class="ml-3">
+              <h2 class="text-lg font-medium">
+                {{ currentStep === 1 ? 'Room Initialization' : currentStep === 2 ? 'Seat Customization' : 'Final Review' }}
+              </h2>
+              <p class="text-sm text-[#999999]">
+                {{ 
+                  currentStep === 1 ? 'Set up basic room parameters' : 
+                  currentStep === 2 ? 'Customize seat types and layout' : 
+                  'Review and save your room configuration' 
+                }}
+              </p>
+            </div>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="mt-4 relative h-2 bg-[#333333] rounded-full overflow-hidden">
+            <div 
+              class="absolute top-0 left-0 h-full bg-[#e50000] transition-all duration-300 ease-in-out"
+              :style="{ width: `${(currentStep / 3) * 100}%` }"
+            ></div>
+          </div>
+        </div>
+
         <!-- Room List (Initial View) -->
         <RoomList 
           v-if="showRoomList" 
@@ -45,6 +76,13 @@
           @create-room="startNewRoom"
           @edit-room="editRoom"
           @delete-room="confirmDeleteRoom"
+        />
+
+        <!-- Step 1: Room Initialization -->
+        <RoomFormStepOne
+          v-if="currentStep === 1 && !showRoomList"
+          v-model:room-data="roomData"
+          @continue="goToStep2"
         />
 
       </main>
@@ -55,7 +93,37 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import RoomList from '@/components/cinemaAdmin/roomManager/RoomList.vue';
+import RoomFormStepOne from '@/components/cinemaAdmin/roomManager/RoomFormStepOne.vue';
 
 const showRoomList = ref(true);
+const currentStep = ref(1);
+const isEditMode = ref(false);
 const rooms = ref([]);
+
+// Room Creator State
+const roomData = ref({
+  id: null,
+  name: '',
+  rows: 10,
+  seatsPerRow: 15,
+  defaultSeatType: 'Standard',
+  rowNaming: 'letters',
+  layout: []
+});
+
+const startNewRoom = () => {
+  roomData.value = {
+    id: null,
+    name: '',
+    rows: 10,
+    seatsPerRow: 15,
+    defaultSeatType: 'Standard',
+    rowNaming: 'letters',
+    layout: []
+  };
+  
+  currentStep.value = 1;
+  showRoomList.value = false;
+  isEditMode.value = false;
+};
 </script>
