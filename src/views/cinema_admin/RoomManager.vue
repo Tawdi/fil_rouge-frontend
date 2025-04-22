@@ -85,6 +85,13 @@
           @continue="goToStep2"
         />
 
+        <!-- Step 2: Seat Customization -->
+        <RoomFormStepTwo
+          v-if="currentStep === 2 && !showRoomList"
+          v-model:room-data="roomData"
+          @continue="goToStep3"
+        />
+
       </main>
     </div>
   </div>
@@ -94,12 +101,14 @@
 import { ref, onMounted } from 'vue';
 import RoomList from '@/components/cinemaAdmin/roomManager/RoomList.vue';
 import RoomFormStepOne from '@/components/cinemaAdmin/roomManager/RoomFormStepOne.vue';
+import RoomFormStepTwo from '@/components/cinemaAdmin/roomManager/RoomFormStepTwo.vue';
 
 const showRoomList = ref(true);
 const currentStep = ref(1);
 const isEditMode = ref(false);
 const rooms = ref([]);
-
+const showDeleteModal = ref(false);
+const roomToDelete = ref(null);
 // Room Creator State
 const roomData = ref({
   id: null,
@@ -125,5 +134,71 @@ const startNewRoom = () => {
   currentStep.value = 1;
   showRoomList.value = false;
   isEditMode.value = false;
+};
+
+const cancelRoomCreation = () => {
+  showRoomList.value = true;
+  currentStep.value = 1;
+};
+
+const editRoom = (room) => {
+  roomData.value = JSON.parse(JSON.stringify(room));
+  isEditMode.value = true;
+  currentStep.value = 2;
+  showRoomList.value = false;
+};
+
+const confirmDeleteRoom = (room) => {
+  roomToDelete.value = room;
+  showDeleteModal.value = true;
+};
+
+
+const initializeRoomLayout = () => {
+  const layout = [];
+  
+  for (let i = 0; i < roomData.value.rows; i++) {
+    const row = [];
+    
+    for (let j = 0; j < roomData.value.seatsPerRow; j++) {
+      row.push({
+        type: roomData.value.defaultSeatType,
+        row: i,
+        column: j
+      });
+    }
+    
+    layout.push(row);
+  }
+  
+  roomData.value.layout = layout;
+};
+
+const goToStep2 = () => {
+  // Initialize the room layout
+  initializeRoomLayout();
+  currentStep.value = 2;
+};
+
+const goToStep3 = () => {
+  currentStep.value = 3;
+};
+
+const saveRoom = () => {
+  if (isEditMode.value) {
+    // Update existing room
+    const index = rooms.value.findIndex(r => r.id === roomData.value.id);
+    if (index !== -1) {
+      rooms.value[index] = JSON.parse(JSON.stringify(roomData.value));
+    }
+  } else {
+    // Add new room
+    const maxId = Math.max(0, ...rooms.value.map(r => r.id));
+    roomData.value.id = maxId + 1;
+    rooms.value.push(JSON.parse(JSON.stringify(roomData.value)));
+  }
+  
+  showRoomList.value = true;
+  currentStep.value = 1;
 };
 </script>
