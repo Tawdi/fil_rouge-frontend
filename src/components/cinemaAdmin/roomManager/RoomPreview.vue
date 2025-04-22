@@ -144,7 +144,14 @@
   const getRowLabel = (index) => {
     if (props.roomData.rowNaming === 'letters') {
       // Convert to letter (A, B, C, ...)
-      return String.fromCharCode(65 + index);
+      let label = '';
+    index++; 
+    while (index > 0) {
+      let remainder = (index - 1) % 26;
+      label = String.fromCharCode(65 + remainder) + label;
+      index = Math.floor((index - 1) / 26);
+    }
+    return label;
     } else {
       // Use numbers
       return (index + 1).toString();

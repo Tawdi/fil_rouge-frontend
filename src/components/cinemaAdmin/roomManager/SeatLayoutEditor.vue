@@ -2,7 +2,7 @@
   <div class="bg-[#1a1a1a] rounded-lg p-6">
     <h2 class="text-xl font-bold mb-6">Seat Layout Editor</h2>
     
-    <div class="bg-[#262626] rounded-lg p-4 h-[calc(100%-4rem)] flex flex-col">
+    <div class="bg-[#262626] rounded-lg p-4  flex flex-col">
       <div class="relative w-full mb-6">
         <div 
           class="w-full h-8 bg-[#333333] rounded-md flex items-center justify-center text-sm"
@@ -10,9 +10,23 @@
           SCREEN
         </div>
       </div>
-      
-      <div class="flex-1 overflow-auto">
-        <div class="flex flex-col items-center">
+            <!-- Column Labels -->
+            <div class="mb-2 flex justify-center">
+        <div class="w-8"></div>
+        <div class="flex">
+          <div 
+            v-for="(seat, index) in roomData.layout[0]" 
+            :key="`col-label-${index}`"
+            class="w-10 text-center text-xs text-[#999999] cursor-pointer hover:text-white"
+            @click="$emit('select-column', index)"
+          >
+            {{ getSeatLabel(index + 1) }} 
+          </div>
+        </div>
+        <div class="w-8"></div>
+      </div>
+      <div class="flex-1 overflow-auto ">
+        <div class="flex flex-col items-center ">
           <div 
             v-for="(row, rowIndex) in roomData.layout" 
             :key="`editor-row-${rowIndex}`"
@@ -61,7 +75,7 @@
         <div class="w-8"></div>
         <div class="flex">
           <div 
-            v-for="(_, index) in Array(roomData.seatsPerRow)" 
+          v-for="(seat, index) in roomData.layout[0]" 
             :key="`col-label-${index}`"
             class="w-10 text-center text-xs text-[#999999] cursor-pointer hover:text-white"
             @click="$emit('select-column', index)"
@@ -102,7 +116,14 @@ defineEmits(['toggle-seat', 'select-row', 'select-column', 'mouse-enter']);
 const getRowLabel = (index) => {
   if (props.roomData.rowNaming === 'letters') {
     // Convert to letter (A, B, C, ...)
-    return String.fromCharCode(65 + index);
+    let label = '';
+    index++; 
+    while (index > 0) {
+      let remainder = (index - 1) % 26;
+      label = String.fromCharCode(65 + remainder) + label;
+      index = Math.floor((index - 1) / 26);
+    }
+    return label;
   } else {
     // Use numbers
     return (index + 1).toString();

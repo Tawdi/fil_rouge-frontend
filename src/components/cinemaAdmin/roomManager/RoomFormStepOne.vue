@@ -22,7 +22,7 @@
               v-model.number="localRoomData.rows"
               type="number" 
               min="1"
-              max="30"
+              max="90"
               required
               class="bg-[#262626] border border-[#333333] rounded-md py-2 px-3 text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#e50000]"
             />
@@ -141,13 +141,11 @@
   
   // Create a local copy of the roomData to avoid direct mutation
   const localRoomData = ref({ ...props.roomData });
-  
-  // Watch for changes in the local data and emit updates
+
   watch(localRoomData, (newValue) => {
     emit('update:room-data', newValue);
   }, { deep: true });
-  
-  // Watch for changes in the props and update local data
+
   watch(() => props.roomData, (newValue) => {
     localRoomData.value = { ...newValue };
   }, { deep: true });
@@ -178,7 +176,14 @@
   const getRowLabel = (index) => {
     if (localRoomData.value.rowNaming === 'letters') {
       // Convert to letter (A, B, C, ...)
-      return String.fromCharCode(65 + index);
+      let label = '';
+    index++; 
+    while (index > 0) {
+      let remainder = (index - 1) % 26;
+      label = String.fromCharCode(65 + remainder) + label;
+      index = Math.floor((index - 1) / 26);
+    }
+    return label;
     } else {
       // Use numbers
       return (index + 1).toString();

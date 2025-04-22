@@ -235,8 +235,8 @@
         localRoomData.value.layout[i].push(newSeat);
       }
     }
-
     localRoomData.value.seatsPerRow = localRoomData.value.layout[0].length;
+    console.log("add column",localRoomData.value);
     selectedSeats.value = [];
   };
   
