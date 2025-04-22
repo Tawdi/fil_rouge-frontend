@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-[#0f0f0f] py-8">
+  <footer class=" absolute bottom-0 left-0 w-full bg-[#0f0f0f] py-8">
     <div class="container mx-auto text-center">
       <p class="text-[#999999] text-sm mb-4">
         MovieSeat|Tawdi © 2023. All rights reserved.

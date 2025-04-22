@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-[#141414] text-white">
+    <div  class=" pb-[170px] min-h-screen relative bg-[#141414] text-white">
       <!-- Header -->
       <Header></Header>
   
