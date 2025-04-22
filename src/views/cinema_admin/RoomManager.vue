@@ -92,6 +92,13 @@
           @continue="goToStep3"
         />
 
+        <!-- Step 3: Final Review -->
+        <RoomPreview
+          v-if="currentStep === 3 && !showRoomList"
+          :room-data="roomData"
+          @save="saveRoom"
+          @continue-editing="currentStep = 2"
+        />
 
         <!-- Confirmation Modal -->
         <ConfirmationModal
@@ -115,6 +122,7 @@ import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
 import RoomList from '@/components/cinemaAdmin/roomManager/RoomList.vue';
 import RoomFormStepOne from '@/components/cinemaAdmin/roomManager/RoomFormStepOne.vue';
 import RoomFormStepTwo from '@/components/cinemaAdmin/roomManager/RoomFormStepTwo.vue';
+import RoomPreview from '@/components/cinemaAdmin/roomManager/RoomPreview.vue';
 
 const showRoomList = ref(true);
 const currentStep = ref(1);
