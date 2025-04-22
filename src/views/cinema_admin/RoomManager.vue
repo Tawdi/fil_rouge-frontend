@@ -92,6 +92,18 @@
           @continue="goToStep3"
         />
 
+
+        <!-- Confirmation Modal -->
+        <ConfirmationModal
+          v-if="showDeleteModal"
+          title="Delete Room"
+          :message="`Are you sure you want to delete ${roomToDelete?.name}? This action cannot be undone.`"
+          confirm-text="Delete"
+          confirm-class="bg-red-600 hover:bg-red-700"
+          @confirm="deleteRoom"
+          @cancel="showDeleteModal = false"
+        />
+
       </main>
     </div>
   </div>
@@ -99,6 +111,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
 import RoomList from '@/components/cinemaAdmin/roomManager/RoomList.vue';
 import RoomFormStepOne from '@/components/cinemaAdmin/roomManager/RoomFormStepOne.vue';
 import RoomFormStepTwo from '@/components/cinemaAdmin/roomManager/RoomFormStepTwo.vue';
@@ -153,6 +166,14 @@ const confirmDeleteRoom = (room) => {
   showDeleteModal.value = true;
 };
 
+const deleteRoom = () => {
+  const index = rooms.value.findIndex(r => r.id === roomToDelete.value.id);
+  if (index !== -1) {
+    rooms.value.splice(index, 1);
+  }
+  showDeleteModal.value = false;
+  roomToDelete.value = null;
+};
 
 const initializeRoomLayout = () => {
   const layout = [];
