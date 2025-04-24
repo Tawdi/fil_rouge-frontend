@@ -150,9 +150,11 @@
 
 
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router'
+import { useNotificationStore } from "@/stores/notificationStore";
+const notificationStore = useNotificationStore();
 
 const router = useRouter()
 const successMessage = ref('')
@@ -254,6 +256,12 @@ const handleRegister = async () => {
 const handleGoogleLogin = () => {
   window.location.href = 'http://127.0.0.1:8000/api/auth/google/redirect'
 }
+
+onMounted(() => {
+  setTimeout(() => {
+    notificationStore.notifications = [];
+  }, 5000);
+});
 </script>
 
 <style></style>
