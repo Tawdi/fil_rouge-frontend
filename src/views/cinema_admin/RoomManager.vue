@@ -124,6 +124,11 @@ import RoomFormStepOne from '@/components/cinemaAdmin/roomManager/RoomFormStepOn
 import RoomFormStepTwo from '@/components/cinemaAdmin/roomManager/RoomFormStepTwo.vue';
 import RoomPreview from '@/components/cinemaAdmin/roomManager/RoomPreview.vue';
 
+import roomService from "@/services/roomService";
+import { useNotificationStore } from "@/stores/notificationStore";
+
+const notificationStore = useNotificationStore();
+
 const showRoomList = ref(true);
 const currentStep = ref(1);
 const isEditMode = ref(false);
@@ -135,9 +140,9 @@ const roomData = ref({
   id: null,
   name: '',
   rows: 10,
-  seatsPerRow: 15,
+  seats_per_row: 15,
   defaultSeatType: 'Standard',
-  rowNaming: 'letters',
+  row_naming: 'letters',
   layout: []
 });
 
@@ -146,9 +151,9 @@ const startNewRoom = () => {
     id: null,
     name: '',
     rows: 10,
-    seatsPerRow: 15,
+    seats_per_row: 15,
     defaultSeatType: 'Standard',
-    rowNaming: 'letters',
+    row_naming: 'letters',
     layout: []
   };
   
@@ -174,14 +179,28 @@ const confirmDeleteRoom = (room) => {
   showDeleteModal.value = true;
 };
 
-const deleteRoom = () => {
-  const index = rooms.value.findIndex(r => r.id === roomToDelete.value.id);
-  if (index !== -1) {
-    rooms.value.splice(index, 1);
+const deleteRoom = async () => {
+  try {
+    await roomService.deleteRoom(roomToDelete.value.id);
+
+    notificationStore.pushNotification({
+      message: `Room "${roomToDelete.value.name}" deleted successfully.`,
+      type: "success",
+    });
+
+    await fetchRooms();
+  } catch (error) {
+    console.error("Failed to delete room:", error);
+    notificationStore.pushNotification({
+      message: "Failed to delete the room.",
+      type: "error",
+    });
+  } finally {
+    showDeleteModal.value = false;
+    roomToDelete.value = null;
   }
-  showDeleteModal.value = false;
-  roomToDelete.value = null;
 };
+
 
 const initializeRoomLayout = () => {
   const layout = [];
@@ -189,7 +208,7 @@ const initializeRoomLayout = () => {
   for (let i = 0; i < roomData.value.rows; i++) {
     const row = [];
     
-    for (let j = 0; j < roomData.value.seatsPerRow; j++) {
+    for (let j = 0; j < roomData.value.seats_per_row; j++) {
       row.push({
         type: roomData.value.defaultSeatType,
         row: i,
@@ -213,21 +232,63 @@ const goToStep3 = () => {
   currentStep.value = 3;
 };
 
-const saveRoom = () => {
-  if (isEditMode.value) {
-    // Update existing room
-    const index = rooms.value.findIndex(r => r.id === roomData.value.id);
-    if (index !== -1) {
-      rooms.value[index] = JSON.parse(JSON.stringify(roomData.value));
+const saveRoom = async () => {
+  try {
+    const payload = {
+      name: roomData.value.name,
+      rows: roomData.value.rows,
+      row_naming: roomData.value.row_naming,
+      seats_per_row: roomData.value.seats_per_row,
+      layout: JSON.stringify(roomData.value.layout),
+    };
+
+    if (isEditMode.value) {
+      await roomService.updateRoom(roomData.value.id, payload);
+      notificationStore.pushNotification({
+        message: `Room "${roomData.value.name}" updated successfully.`,
+        type: "success",
+      });
+    } else {
+      await roomService.createRoom(payload);
+      notificationStore.pushNotification({
+        message: `Room "${roomData.value.name}" created successfully.`,
+        type: "success",
+      });
     }
-  } else {
-    // Add new room
-    const maxId = Math.max(0, ...rooms.value.map(r => r.id));
-    roomData.value.id = maxId + 1;
-    rooms.value.push(JSON.parse(JSON.stringify(roomData.value)));
+
+    await fetchRooms();
+    showRoomList.value = true;
+    currentStep.value = 1;
+  } catch (error) {
+    console.error("Error saving room:", error);
+    notificationStore.pushNotification({
+      message: "Failed to save change.",
+      type: "error",
+    });
   }
-  
-  showRoomList.value = true;
-  currentStep.value = 1;
 };
+
+const fetchRooms = async () => {
+  try {
+    const response = await roomService.getRooms();
+    rooms.value = response.data.data;
+    rooms.value.forEach( (rm)=>{
+      if (typeof rm.layout === "string") {
+    try {
+      rm.layout = JSON.parse(rm.layout);
+    } catch (e) {
+      console.error("Invalid JSON layout:", rm.layout, e);
+      rm.layout = []; 
+    }
+  }
+    } )
+  } catch (error) {
+    console.error("Error loading rooms:", error);
+    notificationStore.pushNotification({
+      message: "An error occurred while loading rooms.",
+      type: "error",
+    });
+  }
+};
+onMounted(fetchRooms);
 </script>
