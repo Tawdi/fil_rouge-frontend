@@ -1,5 +1,5 @@
 <template>
-    <transition-group name="toast" tag="div" class="fixed top-5 right-5 z-50 space-y-2">
+    <transition-group name="toast" tag="div" class="fixed top-5 right-5 z-[200] space-y-2">
   <div
     v-for="notif in notifications"
     :key="notif.id"

@@ -31,7 +31,7 @@
           <div>
             <label class="block text-sm font-medium text-[#999999] mb-1">Seats per Row</label>
             <input 
-              v-model.number="localRoomData.seatsPerRow"
+              v-model.number="localRoomData.seats_per_row"
               type="number" 
               min="1"
               max="40"
@@ -55,7 +55,7 @@
           <div>
             <label class="block text-sm font-medium text-[#999999] mb-1">Row Naming</label>
             <select 
-              v-model="localRoomData.rowNaming"
+              v-model="localRoomData.row_naming"
               class="bg-[#262626] border border-[#333333] rounded-md py-2 px-3 text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#e50000]"
             >
               <option value="letters">Letters (A, B, C...)</option>
@@ -160,7 +160,7 @@
         seats: []
       };
       
-      for (let j = 0; j < localRoomData.value.seatsPerRow; j++) {
+      for (let j = 0; j < localRoomData.value.seats_per_row; j++) {
         row.seats.push({
           index: j,
           label: getSeatLabel(j + 1)
@@ -174,7 +174,7 @@
   });
   
   const getRowLabel = (index) => {
-    if (localRoomData.value.rowNaming === 'letters') {
+    if (localRoomData.value.row_naming === 'letters') {
       // Convert to letter (A, B, C, ...)
       let label = '';
     index++; 

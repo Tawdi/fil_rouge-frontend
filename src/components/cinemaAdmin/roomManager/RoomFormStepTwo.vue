@@ -194,7 +194,7 @@
 
     for (let i = 0; i < rowLength; i++) {
       newRow.push({
-        type: localRoomData.value.defaultSeatType,
+        type: localRoomData.value.defaultSeatType ?? 'Standard',
         row: position === 'top' ? 0 : localRoomData.value.layout.length,
         column: i
       });
@@ -221,7 +221,7 @@
 
     for (let i = 0; i < localRoomData.value.layout.length; i++) {
       const newSeat = {
-        type: localRoomData.value.defaultSeatType,
+        type: localRoomData.value.defaultSeatType ?? 'Standard',
         row: i,
         column: position === 'left' ? 0 : localRoomData.value.layout[i].length
       };
@@ -235,7 +235,7 @@
         localRoomData.value.layout[i].push(newSeat);
       }
     }
-    localRoomData.value.seatsPerRow = localRoomData.value.layout[0].length;
+    localRoomData.value.seats_per_row = localRoomData.value.layout[0].length;
     console.log("add column",localRoomData.value);
     selectedSeats.value = [];
   };
@@ -273,7 +273,7 @@
         localRoomData.value.layout[i].pop();
       }
     }
-    localRoomData.value.seatsPerRow = localRoomData.value.layout[0].length;
+    localRoomData.value.seats_per_row = localRoomData.value.layout[0].length;
     selectedSeats.value = [];
   };
 

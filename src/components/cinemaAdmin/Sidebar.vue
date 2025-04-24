@@ -37,7 +37,7 @@
         </nav>
      <!-- Logout Button -->
       <div class="px-4 py-4 border-t border-[#333333] text-[#999999] hover:bg-[#262626] hover:text-white cursor-pointer">
-        <div class="flex items-center">
+        <div class="flex items-center" @click="auth.logout">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -54,6 +54,9 @@
   import { useRoute } from 'vue-router'
   import { computed } from 'vue'
   
+  import { useAuthStore } from '@/stores/auth'
+  const auth = useAuthStore()
+
   const props = defineProps({ isOpen: Boolean })
   defineEmits(['toggle-sidebar'])
   

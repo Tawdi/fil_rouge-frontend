@@ -114,7 +114,7 @@ const props = defineProps({
 defineEmits(['toggle-seat', 'select-row', 'select-column', 'mouse-enter']);
 
 const getRowLabel = (index) => {
-  if (props.roomData.rowNaming === 'letters') {
+  if (props.roomData.row_naming === 'letters') {
     // Convert to letter (A, B, C, ...)
     let label = '';
     index++; 

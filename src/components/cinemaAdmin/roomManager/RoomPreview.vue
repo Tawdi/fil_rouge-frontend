@@ -7,7 +7,7 @@
         <div class="space-y-4">
           <div>
             <h3 class="text-lg font-medium">{{ roomData.name }}</h3>
-            <p class="text-[#999999]">{{ roomData.rows }} rows × {{ roomData.seatsPerRow }} columns</p>
+            <p class="text-[#999999]">{{ roomData.rows }} rows × {{ roomData.seats_per_row }} columns</p>
           </div>
           
           <div class="bg-[#262626] rounded-lg p-4">
@@ -142,7 +142,7 @@
   defineEmits(['save', 'continue-editing']);
   
   const getRowLabel = (index) => {
-    if (props.roomData.rowNaming === 'letters') {
+    if (props.roomData.row_naming === 'letters') {
       // Convert to letter (A, B, C, ...)
       let label = '';
     index++; 
