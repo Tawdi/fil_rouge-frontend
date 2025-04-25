@@ -28,7 +28,16 @@
                     </div>
                 </div>
                 <!--  -->
-                <div class="w-full md:w-3/4 bg-[#272727] rounded-lg p-6"></div>
+                <div class=" flex-1 bg-[#272727] rounded-lg p-2">
+
+                    <Room
+                    :room-data="room"
+                    :seance-data="seance"
+                    @select="handleSeatSelect"
+                    @unselect="handleSeatUnselect"
+                    />
+
+                </div>
             </div>
             <!--  -->
             <div class="mt-6 bg-[#272727] rounded-lg p-6">
@@ -38,7 +47,52 @@
     </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { onMounted, ref } from 'vue';
+import Room from '@/components/user/Room.vue'
+import seanceService from '@/services/seanceService'
+import { useNotificationStore } from "@/stores/notificationStore";
+
+const notificationStore = useNotificationStore();
+const selectedSeanceId = ref(null);
+const seance = ref({});
+const room = ref({});
+const fetchSeance = async ()=>{
+    try {
+        const response = await seanceService.getSeance(selectedSeanceId.value)
+        seance.value = response.data
+        room.value = seance.value.room
+        room.value.layout= JSON.parse(room.value.layout)
+        room.value.layout[2][2].etat='taken'
+    } catch (error) {
+        console.error("Error fetching seance:", error);
+        notificationStore.pushNotification({
+          message: "Erreur fetching seance.",
+          type: "error",
+        });
+    }
+
+}
+
+const handleSeatSelect = (seatData) => {
+    console.log(`Selected seat at row ${seatData.row}, col ${seatData.col}`);
+    if (room.value.layout[seatData.row][seatData.col].etat !== 'selected') {
+        room.value.layout[seatData.row][seatData.col].etat = 'selected';
+        console.log(room.value.layout[seatData.row][seatData.col]);
+    }
+};
+
+const handleSeatUnselect = (seatData) => {
+    if (room.value.layout[seatData.row][seatData.col]?.etat === 'selected') {
+        room.value.layout[seatData.row][seatData.col].etat = '';
+        console.log(room.value.layout[seatData.row][seatData.col]);
+    }
+};
+onMounted(()=>{
+    selectedSeanceId.value = 8 ;
+     fetchSeance()
+})
+</script>
 
 <style>
 </style>
