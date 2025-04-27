@@ -21,6 +21,17 @@
           </div>
         </div>
 
+        <!-- Filters Component -->
+        <SeanceFilters 
+          v-model:filters="filters"
+          :movies="movies"
+          :rooms="rooms"
+          v-model:viewType="viewType"
+          @filter-change="loadSeances"
+          class="mb-6"
+        />
+
+
       </main>
     </div>
   </div>
@@ -28,6 +39,28 @@
 
 <script setup>
 import { ref } from 'vue';
+import SeanceFilters from '@/components/cinemaAdmin/seanceManager/SeanceFilters.vue';
 
+const viewType = ref('calendar');
 const showCreateSeance = ref(false);
+
+
+const seances = ref([]);
+const movies = ref([]);
+const rooms = ref([]);
+
+// Filters
+const filters = ref({
+  start_date: new Date().toISOString().split('T')[0],
+  end_date: addDays(new Date(), 7).toISOString().split('T')[0],
+  movie_id: '',
+  room_id: '',
+});
+
+
+
+
+// Methods
+const loadSeances = async () => {}
+
 </script>
