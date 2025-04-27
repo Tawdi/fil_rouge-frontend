@@ -58,6 +58,20 @@
           class="mb-6"
         />
 
+
+        <!-- List View Component -->
+        <SeanceList
+          v-if="viewType === 'list' && !loading && !showCreateSeance"
+          :seances="seances"
+          :movies="movies"
+          :rooms="rooms"
+          @edit-seance="editSeance"
+          @delete-seance="confirmDeleteSeance"
+          @duplicate-seance="duplicateSeance"
+          @create-seance="openCreateSeance"
+        />
+
+
         <!-- Error State -->
         <div v-if="error && !loading && !showCreateSeance" class="bg-[#1a1a1a] rounded-lg p-6">
           <div class="flex items-start gap-3 text-red-400">
@@ -176,6 +190,35 @@ const loadSeances = async () => {
   }
 };
 
+const openCreateSeance = () => {
+  editMode.value = false;
+  
+  const now = new Date();
+  now.setHours(now.getHours() + 1, 0, 0, 0); 
+  
+  const endTime = new Date(now);
+  endTime.setHours(endTime.getHours() + 2);
+  
+  currentSeance.value = {
+    movie_id: '',
+    room_id: '',
+    start_time: now.toISOString().slice(0, 16).replace('T', ' '),
+    end_time: endTime.toISOString().slice(0, 16).replace('T', ' '),
+    pricing: {
+      Standard: 10.99, VIP: 15.99, Accessible: 10.99 
+    }
+  };
+  
+  conflicts.value = [];
+  showCreateSeance.value = true;
+};
+
+const cancelCreateSeance = () => {
+  showCreateSeance.value = false;
+  editMode.value = false;
+  conflicts.value = [];
+};
+
 const saveSeance = async () => {
   if (hasConflict.value) {
     return;
@@ -223,6 +266,11 @@ const editSeance = async (seance) => {
     console.error('Error loading seance details:', err);
     error.value = err.response?.data?.message || 'Failed to load seance details. Please try again.';
   }
+};
+
+const confirmDeleteSeance = (seance) => {
+  seanceToDelete.value = seance;
+  showDeleteModal.value = true;
 };
 
 const deleteSeance = async () => {
