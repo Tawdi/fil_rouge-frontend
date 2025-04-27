@@ -58,6 +58,35 @@
           class="mb-6"
         />
 
+        <!-- Error State -->
+        <div v-if="error && !loading && !showCreateSeance" class="bg-[#1a1a1a] rounded-lg p-6">
+          <div class="flex items-start gap-3 text-red-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-circle mt-1"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            <div>
+              <h3 class="text-lg font-medium mb-2">Error Loading Data</h3>
+              <p>{{ error }}</p>
+              <button 
+                @click="loadSeances"
+                class="mt-4 px-4 py-2 bg-[#333333] hover:bg-[#444444] text-white rounded-md"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <ConfirmationModal
+          v-if="showDeleteModal"
+          title="Delete Seance"
+          :message="`Are you sure you want to delete this seance for '${getMovieTitle(seanceToDelete?.movie_id)}' on ${formatDateTime(seanceToDelete?.start_time)}? This action cannot be undone.`"
+          confirm-text="Delete"
+          confirm-class="bg-red-600 hover:bg-red-700"
+          @confirm="deleteSeance"
+          @cancel="showDeleteModal = false"
+        />
+
+
       </main>
     </div>
   </div>
@@ -69,6 +98,8 @@ import movieService from "@/services/movieService";
 import roomService from "@/services/roomService";
 import seanceService from "@/services/seanceService";
 
+
+import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
 import SeanceFilters from '@/components/cinemaAdmin/seanceManager/SeanceFilters.vue';
 import SeanceForm from '@/components/cinemaAdmin/seanceManager/SeanceForm.vue';
 import { formatDateTime, parseDateTime, getStartOfWeek, addDays } from '@/utils/dateTime';
@@ -174,8 +205,50 @@ const saveSeance = async () => {
   }
 };
 
+const editSeance = async (seance) => {
+  editMode.value = true;
+  
+  try {
 
+    const response = await seanceService.getSeance(seance.id);
+    currentSeance.value = response.data.data;
+    
+    if (typeof currentSeance.value.pricing === 'string') {
+      currentSeance.value.pricing = JSON.parse(currentSeance.value.pricing);
+    }
+    
+    conflicts.value = [];
+    showCreateSeance.value = true;
+  } catch (err) {
+    console.error('Error loading seance details:', err);
+    error.value = err.response?.data?.message || 'Failed to load seance details. Please try again.';
+  }
+};
 
+const deleteSeance = async () => {
+  if (!seanceToDelete.value) return;
+  
+  loading.value = true;
+  
+  try {
+    await seanceService.deleteSeance(seanceToDelete.value.id);
+    
+    await loadSeances();
+    
+    showDeleteModal.value = false;
+    seanceToDelete.value = null;
+  } catch (err) {
+    console.error('Error deleting seance:', err);
+    error.value = err.response?.data?.message || 'Failed to delete seance. Please try again.';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const getMovieTitle = (movieId) => {
+  const movie = movies.value.find(m => m.id === movieId);
+  return movie ? movie.titre : 'Unknown Movie';
+};
 onMounted(() => {
   loadSeances();
 });
