@@ -58,6 +58,22 @@
           class="mb-6"
         />
 
+        <!-- Timeline Calendar View  -->
+        <SeanceTimeline
+          v-if="viewType === 'calendar' && !loading && !showCreateSeance"
+          :currentWeekStart="currentWeekStart"
+          :weekDays="weekDays"
+          :timeScale="timeScale"
+          :seances="seances"
+          :movies="movies"
+          :rooms="rooms"
+          @previous-week="previousWeek"
+          @next-week="nextWeek"
+          @set-current-week="setCurrentWeek"
+          @edit-seance="editSeance"
+          @create-seance-at-time="handleTimelineClick"
+        />
+
 
         <!-- List View Component -->
         <SeanceList
@@ -116,6 +132,8 @@ import seanceService from "@/services/seanceService";
 import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
 import SeanceFilters from '@/components/cinemaAdmin/seanceManager/SeanceFilters.vue';
 import SeanceForm from '@/components/cinemaAdmin/seanceManager/SeanceForm.vue';
+import SeanceTimeline from '@/components/cinemaAdmin/seanceManager/SeanceTimeline.vue';
+import SeanceList from '@/components/cinemaAdmin/seanceManager/SeanceList.vue';
 import { formatDateTime, parseDateTime, getStartOfWeek, addDays } from '@/utils/dateTime';
 
 const viewType = ref('calendar');
@@ -219,6 +237,43 @@ const cancelCreateSeance = () => {
   conflicts.value = [];
 };
 
+
+const checkConflicts = async () => {
+  if (!currentSeance.value.room_id || !currentSeance.value.start_time || !currentSeance.value.end_time) {
+    conflicts.value = [];
+    return;
+  }
+  
+  try {
+    const response = await seanceService.getSeances({
+      room_id: currentSeance.value.room_id,
+      date: new Date(currentSeance.value.start_time).toISOString().split('T')[0]
+    });
+    
+    const roomSeances = response.data.data;
+
+    conflicts.value = roomSeances.filter(seance => {
+      if (editMode.value && seance.id === currentSeance.value.id) {
+        return false;
+      }
+      
+      const newStart = new Date(currentSeance.value.start_time);
+      const newEnd = new Date(currentSeance.value.end_time);
+      const seanceStart = new Date(seance.start_time);
+      const seanceEnd = new Date(seance.end_time);
+
+      return (
+        (newStart >= seanceStart && newStart < seanceEnd) || 
+        (newEnd > seanceStart && newEnd <= seanceEnd) || 
+        (newStart <= seanceStart && newEnd >= seanceEnd) 
+      );
+    });
+  } catch (err) {
+    console.error('Error checking conflicts:', err);
+  }
+};
+
+
 const saveSeance = async () => {
   if (hasConflict.value) {
     return;
@@ -291,6 +346,75 @@ const deleteSeance = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const duplicateSeance = (seance) => {
+  editMode.value = false;
+
+  const { id, created_at, updated_at, ...seanceCopy } = seance;
+  
+  const startTime = new Date(seanceCopy.start_time);
+  startTime.setDate(startTime.getDate() + 1);
+  seanceCopy.start_time = startTime.toISOString().slice(0, 16).replace('T', ' ');
+
+  const endTime = new Date(seanceCopy.end_time);
+  endTime.setDate(endTime.getDate() + 1);
+  seanceCopy.end_time = endTime.toISOString().slice(0, 16).replace('T', ' ');
+
+  if (typeof seanceCopy.pricing === 'string') {
+    seanceCopy.pricing = JSON.parse(seanceCopy.pricing);
+  }
+  
+  currentSeance.value = seanceCopy;
+  conflicts.value = [];
+  showCreateSeance.value = true;
+
+  checkConflicts();
+};
+
+const handleTimelineClick = (event, date) => {
+  editMode.value = false;
+
+  const clickedDateTime = new Date(date);
+  clickedDateTime.setHours(parseInt(event.time.split(':')[0]), parseInt(event.time.split(':')[1]), 0, 0);
+  
+  const endDateTime = new Date(clickedDateTime);
+  endDateTime.setHours(endDateTime.getHours() + 2);
+  
+  currentSeance.value = {
+    movie_id: '',
+    room_id: '',
+    start_time: clickedDateTime.toISOString().slice(0, 16).replace('T', ' '),
+    end_time: endDateTime.toISOString().slice(0, 16).replace('T', ' '),
+    pricing: {
+      Standard: 10.99, VIP: 15.99, Accessible: 10.99 
+    }
+  };
+  
+  conflicts.value = [];
+  showCreateSeance.value = true;
+};
+
+
+const previousWeek = () => {
+  currentWeekStart.value = addDays(currentWeekStart.value, -7);
+  updateDateFilters();
+};
+
+const nextWeek = () => {
+  currentWeekStart.value = addDays(currentWeekStart.value, 7);
+  updateDateFilters();
+};
+
+const setCurrentWeek = () => {
+  currentWeekStart.value = getStartOfWeek(new Date());
+  updateDateFilters();
+};
+
+const updateDateFilters = () => {
+  filters.value.start_date = currentWeekStart.value.toISOString().split('T')[0];
+  filters.value.end_date = addDays(currentWeekStart.value, 6).toISOString().split('T')[0];
+  loadSeances();
 };
 
 const getMovieTitle = (movieId) => {
