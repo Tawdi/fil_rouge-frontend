@@ -153,7 +153,7 @@ const conflicts = ref([]);
 
 const currentWeekStart = ref(getStartOfWeek(new Date()));
 const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
+const timeScale = Array.from({ length: 17 }, (_, i) => i + 8);
 
 // Filters
 const filters = ref({
