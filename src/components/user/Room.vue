@@ -27,6 +27,7 @@
                   <Seat 
                   :seat="seat"
                   :seatIndex="seatIndex"
+                  :rowLabel="getRowLabel(rowIndex)"
                     @unselect="handleSeatUnselect(rowIndex, seatIndex)"
   @select="handleSeatSelect(rowIndex, seatIndex)"
                   />
