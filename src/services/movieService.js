@@ -2,7 +2,7 @@ import axios from "@/utils/axios";
 
 export default {
   getMovies() {
-    return axios.get("/admin/movies");
+    return axios.get("/movies");
   },
   createMovie(data) {
     return axios.post("/admin/movies", data);

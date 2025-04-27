@@ -2,7 +2,7 @@ import axios from "@/utils/axios";
 
 export default {
   getCinemas() {
-    return axios.get("/admin/cinemas");
+    return axios.get("/cinemas");
   },
   createCinema(data) {
     return axios.post("/admin/cinemas", data);
