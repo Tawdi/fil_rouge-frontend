@@ -128,7 +128,6 @@ import movieService from "@/services/movieService";
 import roomService from "@/services/roomService";
 import seanceService from "@/services/seanceService";
 
-
 import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
 import SeanceFilters from '@/components/cinemaAdmin/seanceManager/SeanceFilters.vue';
 import SeanceForm from '@/components/cinemaAdmin/seanceManager/SeanceForm.vue';
@@ -309,7 +308,7 @@ const editSeance = async (seance) => {
   try {
 
     const response = await seanceService.getSeance(seance.id);
-    currentSeance.value = response.data.data;
+    currentSeance.value = response.data;
     
     if (typeof currentSeance.value.pricing === 'string') {
       currentSeance.value.pricing = JSON.parse(currentSeance.value.pricing);
