@@ -1,7 +1,7 @@
 <template>
   <div class="pt-16 ">
     <!-- Hero Section -->
-    <section class="container mx-auto  px-4">
+    <section class="container kk mx-auto  px-4">
       <div class="relative rounded-xl overflow-hidden lg:h-[600px] ">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30">

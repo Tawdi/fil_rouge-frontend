@@ -53,6 +53,7 @@
         
 </div>
 </section>
+<section class="container h-10" ></section>
 <section class=" container rounded-2xl border-2 border-[#333333]">
   <GenreSlide :categories="categories" title="Our Categories" subtitle=""></GenreSlide>
   <MoviesSlide :movies="movies" title="Trending Now"></MoviesSlide>

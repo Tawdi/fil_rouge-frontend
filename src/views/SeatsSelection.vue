@@ -1,25 +1,25 @@
 <template>
     <div class="py-16"></div>
-    <div class="min-h-screen  text-white p-4 flex flex-col items-center justify-center">
-        <div class="w-full max-w-5xl">
-            <div class="flex flex-col md:flex-row gap-6">
+    <div class="min-h-screen text-white p-4 flex flex-col items-center justify-center ">
+        <div class="w-full max-w-7xl ">
+            <div class="flex flex-col gap-6">
                 <!--  -->
-                <div class="w-full md:w-1/4 rounded-lg overflow-hidden  relative"
+                <div class="w-full rounded-lg overflow-hidden relative bg-cover bg-center"
                     :style="{ backgroundImage: `url(/images/home.png)` }">
-                    <div class=" w-full flex flex-col sm:flex-row md:flex-col p-4 items-center backdrop-blur-sm">
-                        <div class="aspect-[2/3] max-w-[200px] mx-auto mb-4 rounded-lg overflow-hidden">
+                    <div class=" w-full flex flex-col sm:flex-row p-4 items-center backdrop-blur-sm">
+                        <div class="aspect-[2/3] w-full max-w-[150px] sm:max-w-[200px] mx-auto mb-4 sm:mb-0 rounded-lg overflow-hidden">
                             <img src="/images/support.webp" alt=""
                                 class="w-full h-full object-cover" />
                         </div>
-                        <div class="text-center md:text-left ">
+                        <div class="flex-1 text-center sm:text-left sm:pl-4 ">
                             <h1 class="text-2xl font-bold">Cenima Alpha</h1>
-                            <p class="text-gray-300">Casablanca CT 1029 Ain Chock</p>
+                            <p class="text-gray-300 text-sm sm:text-base">Casablanca CT 1029 Ain Chock</p>
                         </div>
-                        <div class="mt-4 mx-auto md:mx-0 w-24 bg-white text-black rounded-md overflow-hidden">
+                        <div class="mt-4 sm:mt-0 w-24 bg-white text-black rounded-md overflow-hidden">
                             <div class="p-2 text-center">
-                                <div class="text-sm font-medium">THU</div>
-                                <div class="text-2xl font-bold">25</div>
-                                <div class="text-sm font-medium">MAR</div>
+                                <div class="text-xs sm:text-sm font-medium">THU</div>
+                                <div class="text-xl sm:text-2xl font-bold">25</div>
+                                <div class="text-xs sm:text-sm font-medium">MAR</div>
                             </div>
                             <div class="bg-yellow-400 text-black text-center py-1 font-medium">
                                 12:30
@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <!--  -->
-                <div class=" flex-1 bg-[#272727] rounded-lg p-2">
+                <div class=" flex-1 bg-[#272727] rounded-lg p-2 h-fit overflow-auto">
 
                     <Room
                     :room-data="room"
@@ -52,7 +52,9 @@ import { onMounted, ref } from 'vue';
 import Room from '@/components/user/Room.vue'
 import seanceService from '@/services/seanceService'
 import { useNotificationStore } from "@/stores/notificationStore";
-
+import seatService from '../services/seatService';
+import { useAuthStore } from '@/stores/auth'; 
+const auth = useAuthStore();
 const notificationStore = useNotificationStore();
 const selectedSeanceId = ref(null);
 const seance = ref({});
@@ -89,7 +91,7 @@ const handleSeatUnselect = (seatData) => {
     }
 };
 onMounted(()=>{
-    selectedSeanceId.value = 8 ;
+    selectedSeanceId.value =8 ;
      fetchSeance()
 })
 </script>
