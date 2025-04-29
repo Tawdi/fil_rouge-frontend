@@ -1,8 +1,8 @@
 <template>
-        <div class="bg-[#262626] rounded-lg p-4 h-[calc(100%-4rem)] flex flex-col">
-          <div class="relative w-full mb-6">
+        <div class="bg-[#262626] rounded-lg p-4 flex flex-col h-full">
+          <div class="relative w-full mb-4">
             <div 
-              class="w-full h-8 bg-[#333333] rounded-md flex items-center justify-center text-sm"
+              class="w-full h-6 sm:h-8 bg-[#333333] rounded-md flex items-center justify-center text-xs sm:text-sm"
             >
               SCREEN
             </div>
@@ -13,12 +13,12 @@
               <div 
                 v-for="(row, rowIndex) in roomData.layout" 
                 :key="`final-row-${rowIndex}`"
-                class="flex items-center mb-2"
+                class="flex items-center mb-2 w-full"
               >
                 <div class="w-8 text-center text-sm text-[#999999]">
                   {{ getRowLabel(rowIndex) }}
                 </div>
-                <div class="flex">
+                <div class="flex flex-1 justify-center">
                   <div 
                     v-for="(seat, seatIndex) in row" 
                     :key="`final-seat-${rowIndex}-${seatIndex}`"
@@ -28,8 +28,8 @@
                   :seat="seat"
                   :seatIndex="seatIndex"
                   :rowLabel="getRowLabel(rowIndex)"
-                    @unselect="handleSeatUnselect(rowIndex, seatIndex)"
-  @select="handleSeatSelect(rowIndex, seatIndex)"
+                  @unselect="handleSeatUnselect(rowIndex, seatIndex)"
+                  @select="handleSeatSelect(rowIndex, seatIndex)"
                   />
                   </div>
                 </div>
@@ -41,7 +41,7 @@
           </div>
           
           <!-- Legend -->
-          <div class="mt-4 pt-4 border-t border-[#333333] flex flex-wrap gap-4">
+          <div class="mt-4 pt-4 border-t border-[#333333] flex flex-wrap gap-3 sm:gap-4">
             <div class="flex items-center">
               <div class="w-4 h-4 rounded bg-blue-500/20 border border-blue-500"></div>
               <span class="ml-2 text-xs">Standard</span>
