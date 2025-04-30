@@ -51,7 +51,7 @@ const router = createRouter({
         { path: '/support', component: Support },
         { path: '/about', component: About },
         { path: '/profile', component: Profile , meta: { requiresAuth: true , requiredRole:'user'} ,},
-        { path: '/booking/:id', component: SeatsSealection },
+        { path: '/booking/:id', component: SeatsSealection ,  meta: { requiresAuth: true } },
       ]
     },
 
