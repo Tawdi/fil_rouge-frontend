@@ -54,11 +54,22 @@ import seanceService from '@/services/seanceService'
 import { useNotificationStore } from "@/stores/notificationStore";
 import seatService from '../services/seatService';
 import { useAuthStore } from '@/stores/auth'; 
+import { useRoute } from 'vue-router';
+
+
+import { io } from "socket.io-client";
+const socket = io(import.meta.env.VITE_WS_URL || 'http://localhost:9999', {
+  withCredentials: true,
+});
+
+const route = useRoute();
 const auth = useAuthStore();
+const userId = auth.user.id;
 const notificationStore = useNotificationStore();
 const selectedSeanceId = ref(null);
 const seance = ref({});
 const room = ref({});
+const selectedSeats = ref([]); 
 const fetchSeance = async ()=>{
     try {
         const response = await seanceService.getSeance(selectedSeanceId.value)
@@ -77,22 +88,57 @@ const fetchSeance = async ()=>{
 }
 
 const handleSeatSelect = (seatData) => {
-    console.log(`Selected seat at row ${seatData.row}, col ${seatData.col}`);
-    if (room.value.layout[seatData.row][seatData.col].etat !== 'selected') {
-        room.value.layout[seatData.row][seatData.col].etat = 'selected';
-        console.log(room.value.layout[seatData.row][seatData.col]);
+    console.log(`Selected seat (${seatData.row},${seatData.col})  by user-${userId}`);
+    const seat = room.value.layout[seatData.row][seatData.col];
+    if (seat.etat !== 'selected') {
+        // seat.etat = 'selected';
+        // console.log(seat);
+        console.log("Emitting seat:select with userId:", userId);
+        socket.emit("seat:select", {
+            seanceId: selectedSeanceId.value,
+            row: seatData.row,
+            col: seatData.col,
+            userId: auth.user.id
+        });
     }
 };
 
 const handleSeatUnselect = (seatData) => {
-    if (room.value.layout[seatData.row][seatData.col]?.etat === 'selected') {
-        room.value.layout[seatData.row][seatData.col].etat = '';
-        console.log(room.value.layout[seatData.row][seatData.col]);
+    const seat = room.value.layout[seatData.row][seatData.col];
+    if (seat?.etat === 'selected') {
+        // seat.etat = '';
+        console.log(`Release seat (${seatData.row},${seatData.col}) by user-${userId}`);
+        socket.emit("seat:release", {
+            seanceId: selectedSeanceId.value,
+            row: seatData.row,
+            col: seatData.col,
+            userId: auth.user.id
+        });
     }
 };
-onMounted(()=>{
-    selectedSeanceId.value =8 ;
-     fetchSeance()
+onMounted( async  ()=>{
+    selectedSeanceId.value =route.params.id ;
+    socket.emit("seance:join", { seanceId: selectedSeanceId.value });
+    console.log(selectedSeanceId.value);
+     await fetchSeance();
+
+
+
+  socket.on("seat:selected", ({ row, col, userId: otherUserId }) => {
+
+    if (room.value.layout[row][col].etat !== 'taken' && otherUserId !== auth.user.id) {
+      room.value.layout[row][col].etat = 'held';
+    }else{
+      room.value.layout[row][col].etat = 'selected';
+    }
+  });
+
+  socket.on("seat:released", ({ row, col }) => {
+    if (room.value.layout[row][col].etat === 'held' || room.value.layout[row][col].etat === 'selected') {
+        room.value.layout[row][col].etat = '';  
+    }
+  });
+
 })
 </script>
 
