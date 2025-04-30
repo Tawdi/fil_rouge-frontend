@@ -122,6 +122,24 @@ onMounted( async  ()=>{
     console.log(selectedSeanceId.value);
      await fetchSeance();
 
+    socket.emit("seat:getHeld", { seanceId: selectedSeanceId.value ,userId:auth.user.id });
+
+    socket.on("seat:heldList", ({ heldByUser, heldByOthers }) => {
+    console.log("by me",heldByUser ,"by other ",heldByOthers);
+    heldByUser.forEach(({ row, col }) => {
+      if (room.value.layout[row][col].etat !== 'taken') {
+        room.value.layout[row][col].etat = 'selected';
+        selectedSeats.value.push({ row: row, col: col , type:room.value.layout[row][col].type }); 
+
+      }
+    });
+
+    heldByOthers.forEach(({ row, col }) => {
+      if (room.value.layout[row][col].etat !== 'taken') {
+        room.value.layout[row][col].etat = 'held';
+      }
+    });
+  });
 
 
   socket.on("seat:selected", ({ row, col, userId: otherUserId }) => {
@@ -130,12 +148,14 @@ onMounted( async  ()=>{
       room.value.layout[row][col].etat = 'held';
     }else{
       room.value.layout[row][col].etat = 'selected';
+      selectedSeats.value.push({ row: row, col: col , type:room.value.layout[row][col].type }); 
     }
   });
 
   socket.on("seat:released", ({ row, col }) => {
     if (room.value.layout[row][col].etat === 'held' || room.value.layout[row][col].etat === 'selected') {
         room.value.layout[row][col].etat = '';  
+      selectedSeats.value = selectedSeats.value.filter((s) => !(s.col === col && s.row === row))
     }
   });
 
