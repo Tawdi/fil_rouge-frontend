@@ -41,9 +41,9 @@
             <!--  -->
             <div class=" mx-auto mt-5 bg-[#262626] rounded-lg p-4 border border-[#333333]">
               <div >
-                <h2 class="text-base font-semibold text-[#E5E5E5] mb-3">Vos sièges sélectionnés :</h2>
+                <h2 class="text-base font-semibold text-[#E5E5E5] mb-3">Your selected seats :</h2>
                 <div v-if="selectedSeats.length === 0" class="text-[#999999] text-sm italic text-center">
-                  Aucun siège sélectionné.
+                  No seats selected.
                 </div>
                 <div v-else>
                   <transition-group name="fade" tag="div" class="flex flex-wrap gap-2 mb-4">
@@ -83,7 +83,7 @@
                   </svg>
                   Processing...
                 </span>
-                <span v-else>Procéder au paiement</span>
+                <span v-else>Continue to Checkout</span>
               </button>
             </div>
         </div>
@@ -95,7 +95,7 @@ import { onMounted, ref } from 'vue';
 import Room from '@/components/user/Room.vue'
 import seanceService from '@/services/seanceService'
 import { useNotificationStore } from "@/stores/notificationStore";
-import seatService from '../services/seatService';
+import reservationService from '@/services/reservationService';
 import { useAuthStore } from '@/stores/auth'; 
 import { useRoute } from 'vue-router';
 
@@ -120,10 +120,15 @@ const isProcessing =ref(false)
 const fetchSeance = async ()=>{
     try {
         const response = await seanceService.getSeance(selectedSeanceId.value)
+        const response2 = await reservationService.getForSeance(selectedSeanceId.value)
+        const reservetions = response2.data ;
         seance.value = response.data
         room.value = seance.value.room
         room.value.layout= JSON.parse(room.value.layout)
-        room.value.layout[2][2].etat='taken'
+
+        reservetions.forEach((rsv)=> { room.value.layout[rsv.row][rsv.col].etat='taken' } )
+        
+
     } catch (error) {
         console.error("Error fetching seance:", error);
         notificationStore.pushNotification({
@@ -186,12 +191,34 @@ const calculePrice = ()=>{
   return price.toFixed(2);
 } 
 
-const handlePayment=() => {
-      isProcessing.value = true;
-      
-      setTimeout(() => {
-        isProcessing.value = false;
-      }, 2000);
+const handlePayment= async () => {
+  if (selectedSeats.value.length === 0) return;
+  isProcessing.value = true;
+  try {
+    const response = await reservationService.reserve({
+      seance_id: selectedSeanceId.value,
+      seats: selectedSeats.value,
+    });
+
+    notificationStore.pushNotification({
+      message: "Paiement réussi et sièges confirmés !",
+      type: "success",
+    });
+
+    selectedSeats.value.forEach(({ row, col }) => {
+      room.value.layout[row][col].etat = 'taken';
+    });
+
+    selectedSeats.value = [];
+  } catch (error) {
+    console.error("Payment error:", error);
+    notificationStore.pushNotification({
+      message: "Échec du paiement. Veuillez réessayer.",
+      type: "error",
+    });
+  } finally {
+    isProcessing.value = false;
+  }
 }
 
 onMounted( async  ()=>{
