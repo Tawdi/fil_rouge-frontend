@@ -200,6 +200,15 @@ const handlePayment= async () => {
       seats: selectedSeats.value,
     });
 
+    selectedSeats.value.forEach(seat => {
+      socket.emit('seat:confirm', {
+        seanceId: selectedSeanceId.value,
+        row: seat.row,
+        col: seat.col,
+        userId: auth.user.id
+      });
+    });
+
     notificationStore.pushNotification({
       message: "Paiement réussi et sièges confirmés !",
       type: "success",
@@ -263,6 +272,14 @@ onMounted( async  ()=>{
       selectedSeats.value = selectedSeats.value.filter((s) => !(s.col === col && s.row === row))
     }
   });
+
+  socket.on("seat:confirmed", ({ seanceId, row, col, userId }) => {
+
+    if (room.value.layout[row][col].etat !== 'taken') {
+    room.value.layout[row][col].etat = 'taken';
+  }
+
+});
 
 })
 </script>
