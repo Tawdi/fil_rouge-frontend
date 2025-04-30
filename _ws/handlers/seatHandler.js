@@ -49,6 +49,35 @@ const handleSeatSelection = (io, socket, redisClient) => {
     }
   });
 
+  socket.on("seat:getHeld", async ({ seanceId, userId }) => {
+    try {
+      const pattern = `seance:${seanceId}:seat:*`;
+      const keys = await redisClient.keys(pattern);
+  
+      const heldByUser = [];
+      const heldByOthers = [];
+  
+      for (const key of keys) {
+        const holder = await redisClient.get(key);
+        const [ , , , rowCol] = key.split(":");
+        const [row, col] = rowCol.split("-").map(Number);
+
+        if (holder === userId.toString()) {
+          heldByUser.push({ row, col });
+        } else {
+          heldByOthers.push({ row, col });
+        }
+      }
+      socket.emit("seat:heldList", {
+        seanceId,
+        heldByUser,
+        heldByOthers
+      });
+    } catch (error) {
+      console.error("Error fetching held seats:", error);
+    }
+  });
+  
 
   socket.on("disconnect", () => {
     console.log(`Socket ${socket.id} disconnected`);
