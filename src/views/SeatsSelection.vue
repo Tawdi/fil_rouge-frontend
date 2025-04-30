@@ -39,24 +39,52 @@
                 </div>
             </div>
             <!--  -->
-            <div class="mt-6 bg-[#272727] rounded-lg p-6">
-
-              <div>
-                <h2 class="text-lg font-bold mb-2">Vos sièges sélectionnés :</h2>
-                <div class="flex flex-wrap gap-2 mb-4">
-                  <div
+            <div class=" mx-auto mt-5 bg-[#262626] rounded-lg p-4 border border-[#333333]">
+              <div >
+                <h2 class="text-base font-semibold text-[#E5E5E5] mb-3">Vos sièges sélectionnés :</h2>
+                <div v-if="selectedSeats.length === 0" class="text-[#999999] text-sm italic text-center">
+                  Aucun siège sélectionné.
+                </div>
+                <div v-else>
+                  <transition-group name="fade" tag="div" class="flex flex-wrap gap-2 mb-4">
+                    <div
                     v-for="seat in selectedSeats"
                     :key="`${seat.row}-${seat.col}`"
-                  >
-                  <ReservedSeat
-                     :key="`${seat.row}-${seat.col}`"
-                     :seat="seat"
-                     :label="getSeatLabel(seat.row , seat.col )"
-                  />
+                    class="transition"
+                    >
+                    <ReservedSeat
+                    :key="`${seat.row}-${seat.col}`"
+                    :seat="seat"
+                    :label="getSeatLabel(seat.row , seat.col )"
+                    />
                   </div>
-                  <div v-if="selectedSeats.length === 0" class="text-gray-400 italic">Aucun siège sélectionné.</div>
+                </transition-group>
+                <div class="bg-[#333333] rounded-md p-3 my-2 flex items-center gap-2 text-sm text-[#E5E5E5]">
+                  <svg class="w-4 h-4 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Your seats are reserved for 'Now' Complete payment to secure them!</span>
+                </div>
+                  <div class="bg-[#333333] rounded-md p-3 mb-4">
+                    <span class="text-base font-semibold text-[#E5E5E5]">Total Price: {{ calculePrice() }}</span>
+                  </div>
                 </div>
               </div>
+              <button
+                v-if="selectedSeats.length > 0"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-[#E5E5E5] px-4 py-2 rounded-md text-sm font-semibold transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-blue-500"
+                :disabled="isProcessing"
+                @click="handlePayment"
+              >
+                <span v-if="isProcessing" class="flex items-center justify-center gap-2">
+                  <svg class="animate-spin w-4 h-4 text-[#E5E5E5]" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
+                  </svg>
+                  Processing...
+                </span>
+                <span v-else>Procéder au paiement</span>
+              </button>
             </div>
         </div>
     </div>
@@ -86,6 +114,9 @@ const selectedSeanceId = ref(null);
 const seance = ref({});
 const room = ref({});
 const selectedSeats = ref([]); 
+const isProcessing =ref(false)
+
+
 const fetchSeance = async ()=>{
     try {
         const response = await seanceService.getSeance(selectedSeanceId.value)
@@ -147,6 +178,22 @@ const getSeatLabel = ( row , col  ) => {
       return `${row}-${col}`;
     }
   };
+
+const calculePrice = ()=>{
+  let price=0;
+  const pricing = JSON.parse(seance.value.pricing)
+  selectedSeats.value.forEach(s=> price+= +pricing[s.type] )
+  return price.toFixed(2);
+} 
+
+const handlePayment=() => {
+      isProcessing.value = true;
+      
+      setTimeout(() => {
+        isProcessing.value = false;
+      }, 2000);
+}
+
 onMounted( async  ()=>{
     selectedSeanceId.value =route.params.id ;
     socket.emit("seance:join", { seanceId: selectedSeanceId.value });
@@ -193,5 +240,11 @@ onMounted( async  ()=>{
 })
 </script>
 
-<style>
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
 </style>
