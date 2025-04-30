@@ -36,12 +36,27 @@
                     @select="handleSeatSelect"
                     @unselect="handleSeatUnselect"
                     />
-
                 </div>
             </div>
             <!--  -->
             <div class="mt-6 bg-[#272727] rounded-lg p-6">
 
+              <div>
+                <h2 class="text-lg font-bold mb-2">Vos sièges sélectionnés :</h2>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <div
+                    v-for="seat in selectedSeats"
+                    :key="`${seat.row}-${seat.col}`"
+                  >
+                  <ReservedSeat
+                     :key="`${seat.row}-${seat.col}`"
+                     :seat="seat"
+                     :label="getSeatLabel(seat.row , seat.col )"
+                  />
+                  </div>
+                  <div v-if="selectedSeats.length === 0" class="text-gray-400 italic">Aucun siège sélectionné.</div>
+                </div>
+              </div>
             </div>
         </div>
     </div>
@@ -58,6 +73,7 @@ import { useRoute } from 'vue-router';
 
 
 import { io } from "socket.io-client";
+import ReservedSeat from '@/components/user/ReservedSeat.vue';
 const socket = io(import.meta.env.VITE_WS_URL || 'http://localhost:9999', {
   withCredentials: true,
 });
@@ -116,6 +132,21 @@ const handleSeatUnselect = (seatData) => {
         });
     }
 };
+
+const getSeatLabel = ( row , col  ) => {
+     row++; col++;
+    if (room.value.row_naming === 'letters') {
+      let label = '';
+    while (row > 0) {
+      let remainder = (row - 1) % 26;
+      label = String.fromCharCode(65 + remainder) + label;
+      row = Math.floor((row - 1) / 26);
+    }
+    return label+'-'+col.toString();
+    } else {
+      return `${row}-${col}`;
+    }
+  };
 onMounted( async  ()=>{
     selectedSeanceId.value =route.params.id ;
     socket.emit("seance:join", { seanceId: selectedSeanceId.value });
