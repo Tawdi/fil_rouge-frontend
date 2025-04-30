@@ -3,6 +3,11 @@
     <div v-else-if="seat.etat === 'taken'" class=" cursor-not-allowed w-8 h-8 mx-1 rounded flex items-center justify-center text-xs text-gray-400 bg-gray-500/50 border border-gray-500">
         {{ getSeatLabel(seatIndex + 1) }}
     </div>
+
+    <div v-else-if="seat.etat === 'held'" 
+        class="cursor-not-allowed w-8 h-8 mx-1 rounded flex items-center justify-center text-xs text-orange-400 bg-orange-500/20 border border-orange-500">
+      {{ getSeatLabel(seatIndex + 1) }}
+    </div>
     <div v-else 
          @click="handleSeatClick"
          class="hover:scale-90 cursor-pointer "
