@@ -68,9 +68,7 @@
   const navItems = [
     { route: '/cinema-admin/dashboard', name: 'Dashboard' },
     { route: '/cinema-admin/room-manage', name: 'Room Manager' },
-    { route: '/cinema-admin/room-manage-2', name: 'Room Manager 2' },
     { route: '/cinema-admin/seance-manage', name: 'Seance Manager' },
-    { route: '/cinema-admin/seance-manage-2', name: 'Seance Manager 2' },
     // { route: '/cinema-admin/bookings', name: 'Bookings' },
     // { route: '/cinema-admin/users', name: 'Users' },
   ]

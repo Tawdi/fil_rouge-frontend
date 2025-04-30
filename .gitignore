@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 test
+src/stores/notificationStore.js
+
+_ws/node_modules
+
+_ws/package-lock.json
