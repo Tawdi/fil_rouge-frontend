@@ -28,6 +28,28 @@ const handleSeatSelection = (io, socket, redisClient) => {
     }
   });
 
+  socket.on("seat:confirm", async ({ seanceId, row, col, userId }) => {
+    const seatKey = `seance:${seanceId}:seat:${row}-${col}`;
+
+    try {
+      const existing = await redisClient.get(seatKey);
+
+      if (!existing || existing !== userId.toString()) {
+        console.log(`Seat ${row}-${col} is not held by user ${userId}. Confirmation failed.`);
+        return;
+      }
+
+      await redisClient.del(seatKey);
+      io.to(`seance-${seanceId}`).emit("seat:confirmed", { seanceId, row, col, userId });
+  
+      console.log(`Seat ${row}-${col} confirmed successfully for user ${userId}`);
+  
+    } catch (error) {
+      console.error("Error confirming seat:", error);
+    }
+  });
+
+
   socket.on("seat:release", async ({ seanceId, row, col, userId }) => {
     const seatKey = `seance:${seanceId}:seat:${row}-${col}`;
     // console.log(`Received seat:release Seance: ${seanceId}, Row: ${row}, Col: ${col}, User: ${userId}`);
@@ -37,7 +59,7 @@ const handleSeatSelection = (io, socket, redisClient) => {
 
       if (currentHolder === userId.toString()) {
         await redisClient.del(seatKey);
-        // console.log(`Seat released by user ${userId} → ${seatKey}`);
+        console.log(`Seat released by user ${userId} → ${seatKey}`);
 
         io.to(`seance-${seanceId}`).emit("seat:released", { seanceId, row, col });
         // console.log(`Broadcasted seat:released Seance: ${seanceId}, Row: ${row}, Col: ${col}`);
