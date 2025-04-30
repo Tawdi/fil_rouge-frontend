@@ -28,6 +28,27 @@ const handleSeatSelection = (io, socket, redisClient) => {
     }
   });
 
+  socket.on("seat:release", async ({ seanceId, row, col, userId }) => {
+    const seatKey = `seance:${seanceId}:seat:${row}-${col}`;
+    // console.log(`Received seat:release Seance: ${seanceId}, Row: ${row}, Col: ${col}, User: ${userId}`);
+
+    try {
+      const currentHolder = await redisClient.get(seatKey);
+
+      if (currentHolder === userId.toString()) {
+        await redisClient.del(seatKey);
+        // console.log(`Seat released by user ${userId} → ${seatKey}`);
+
+        io.to(`seance-${seanceId}`).emit("seat:released", { seanceId, row, col });
+        // console.log(`Broadcasted seat:released Seance: ${seanceId}, Row: ${row}, Col: ${col}`);
+      } else {
+        console.log(`User ${userId} is not the holder of seat ${seatKey}, no action taken`);
+      }
+    } catch (error) {
+      console.error("Error releasing seat:", error);
+    }
+  });
+
 
   socket.on("disconnect", () => {
     console.log(`Socket ${socket.id} disconnected`);
