@@ -19,7 +19,7 @@ const handleSeatSelection = (io, socket, redisClient) => {
       }
 
       await redisClient.set(seatKey, userId.toString(), { EX: 600 });
-      // console.log(`Seat held successfully for user ${userId} → ${seatKey}`);
+      console.log(`Seat held successfully for user ${userId} → ${seatKey}`);
 
       io.to(`seance-${seanceId}`).emit("seat:selected", { seanceId, row, col, userId });
       // console.log(`Broadcasted seat:selected  Seance: ${seanceId}, Row: ${row}, Col: ${col}`);
