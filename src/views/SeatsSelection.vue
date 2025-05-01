@@ -66,15 +66,20 @@
                   <span>Your seats are reserved for 'Now' Complete payment to secure them!</span>
                 </div>
                   <div class="bg-[#333333] rounded-md p-3 mb-4">
-                    <span class="text-base font-semibold text-[#E5E5E5]">Total Price: {{ calculePrice() }}</span>
+                    <span class="text-base font-semibold text-[#E5E5E5]">Total Price: {{ calculePrice() }} USD</span>
+                  </div>
+                </div>
+                <div v-if="selectedSeats.length > 0" class="mt-4">
+                  <div class="rounded-md ">
+                    <div id="payment-element" class="rounded"> waiting for you </div>
                   </div>
                 </div>
               </div>
               <button
-                v-if="selectedSeats.length > 0"
+                v-if="!isPaymentElementMounted"
                 class="w-full bg-blue-500 hover:bg-blue-600 text-[#E5E5E5] px-4 py-2 rounded-md text-sm font-semibold transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-blue-500"
                 :disabled="isProcessing"
-                @click="handlePayment"
+                @click="initializePayment"
               >
                 <span v-if="isProcessing" class="flex items-center justify-center gap-2">
                   <svg class="animate-spin w-4 h-4 text-[#E5E5E5]" fill="none" viewBox="0 0 24 24">
@@ -84,6 +89,25 @@
                   Processing...
                 </span>
                 <span v-else>Continue to Checkout</span>
+              </button>
+              <button
+                v-if="isPaymentElementMounted"
+                class="w-full bg-green-500 hover:bg-green-600 text-[#E5E5E5] px-4 py-2 rounded-md text-sm font-semibold transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-green-500"
+                :disabled="isProcessing"
+                @click="confirmPayment"
+              >
+                <span v-if="isProcessing" class="flex items-center justify-center gap-2">
+                  <svg class="animate-spin w-4 h-4 text-[#E5E5E5]" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                    ></path>
+                  </svg>
+                  Processing...
+                </span>
+                <span v-else>Confirm Payment</span>
               </button>
             </div>
         </div>
@@ -98,13 +122,19 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import reservationService from '@/services/reservationService';
 import { useAuthStore } from '@/stores/auth'; 
 import { useRoute } from 'vue-router';
+import axios from '@/utils/axios';
 
+import { loadStripe } from '@stripe/stripe-js';
 
 import { io } from "socket.io-client";
 import ReservedSeat from '@/components/user/ReservedSeat.vue';
 const socket = io(import.meta.env.VITE_WS_URL || 'http://localhost:9999', {
   withCredentials: true,
 });
+
+let stripe = null;
+const elements = ref(null);
+const paymentElement = ref(null);
 
 const route = useRoute();
 const auth = useAuthStore();
@@ -115,7 +145,9 @@ const seance = ref({});
 const room = ref({});
 const selectedSeats = ref([]); 
 const isProcessing =ref(false)
-
+const isInPayment =ref(false)
+const isPaymentElementMounted = ref(false);
+const clientSecret = ref(null);
 
 const fetchSeance = async ()=>{
     try {
@@ -140,12 +172,13 @@ const fetchSeance = async ()=>{
 }
 
 const handleSeatSelect = (seatData) => {
+  if( isInPayment.value )return;
     console.log(`Selected seat (${seatData.row},${seatData.col})  by user-${userId}`);
     const seat = room.value.layout[seatData.row][seatData.col];
     if (seat.etat !== 'selected') {
         // seat.etat = 'selected';
         // console.log(seat);
-        console.log("Emitting seat:select with userId:", userId);
+        // console.log("Emitting seat:select with userId:", userId);
         socket.emit("seat:select", {
             seanceId: selectedSeanceId.value,
             row: seatData.row,
@@ -156,6 +189,7 @@ const handleSeatSelect = (seatData) => {
 };
 
 const handleSeatUnselect = (seatData) => {
+    if( isInPayment.value )return;
     const seat = room.value.layout[seatData.row][seatData.col];
     if (seat?.etat === 'selected') {
         // seat.etat = '';
@@ -191,46 +225,168 @@ const calculePrice = ()=>{
   return price.toFixed(2);
 } 
 
-const handlePayment= async () => {
+const initializePayment = async () => {
   if (selectedSeats.value.length === 0) return;
   isProcessing.value = true;
+  isInPayment.value =true ;
+
   try {
-    const response = await reservationService.reserve({
+    // Create PaymentIntent
+    const amount = Math.round(parseFloat(calculePrice()) * 100);
+    console.log('Creating PaymentIntent with:', { amount, seance_id: selectedSeanceId.value });
+    const res = await axios.post('/create-payment-intent', {
+      amount,
+      currency: 'usd',
       seance_id: selectedSeanceId.value,
-      seats: selectedSeats.value,
+      seats: selectedSeats.value.map((s) => ({ row: s.row, col: s.col, type: s.type })),
     });
 
-    selectedSeats.value.forEach(seat => {
-      socket.emit('seat:confirm', {
-        seanceId: selectedSeanceId.value,
-        row: seat.row,
-        col: seat.col,
-        userId: auth.user.id
+    if (!res.data.clientSecret) {
+      throw new Error('No client secret returned from server');
+    }
+    clientSecret.value = res.data.clientSecret;
+    console.log('Received clientSecret:', clientSecret.value);
+
+    // Initialize Payment Element
+    if (!elements.value && stripe) {
+      elements.value = stripe.elements({
+        clientSecret: clientSecret.value,
+        appearance: {
+          theme: 'night',
+          variables: {
+            colorBackground: '#333333',
+            colorText: '#E5E5E5',
+            borderRadius: '6px',
+            colorPrimary: '#22C55E',
+            fontFamily: 'Inter, sans-serif',
+          },
+        },
       });
-    });
+      paymentElement.value = elements.value.create('payment');
+      paymentElement.value.mount('#payment-element');
+      console.log('Payment Element mounted');
+      isPaymentElementMounted.value = true;
+    }
 
-    notificationStore.pushNotification({
-      message: "Paiement réussi et sièges confirmés !",
-      type: "success",
-    });
-
-    selectedSeats.value.forEach(({ row, col }) => {
-      room.value.layout[row][col].etat = 'taken';
-    });
-
-    selectedSeats.value = [];
+    if (!elements.value) {
+      throw new Error('Payment form failed to initialize');
+    }
   } catch (error) {
-    console.error("Payment error:", error);
+    console.error('Payment initialization error:', error);
+    let message = 'Failed to initialize payment. Please try again.';
     notificationStore.pushNotification({
-      message: "Échec du paiement. Veuillez réessayer.",
-      type: "error",
+      message,
+      type: 'error',
     });
+    // Reset state on error
+    if (paymentElement.value) {
+      paymentElement.value.destroy();
+      elements.value = null;
+      paymentElement.value = null;
+      isPaymentElementMounted.value = false;
+      clientSecret.value = null;
+    }
   } finally {
     isProcessing.value = false;
   }
-}
+};
+
+const confirmPayment = async () => {
+  if (!elements.value || !clientSecret.value) {
+    notificationStore.pushNotification({
+      message: 'Payment form not initialized. Please try again.',
+      type: 'error',
+    });
+    return;
+  }
+  isProcessing.value = true;
+  isInPayment.value = true;
+
+  try {
+    console.log('Attempting to confirm payment');
+    const { error, paymentIntent } = await stripe.confirmPayment({
+      elements: elements.value,
+      redirect: 'if_required',
+      confirmParams: {
+        payment_method_data: {
+          billing_details: {
+            name: auth.user.name,
+            email: auth.user.email,
+          },
+        },
+      },
+    });
+
+    if (error) {
+      console.error('Payment confirmation error:', error);
+      throw new Error(error.message);
+    }
+
+    // Payment succeeded (no redirect needed)
+    console.log('PaymentIntent status:', paymentIntent.status);
+    if (paymentIntent.status === 'succeeded') {
+
+      console.log('Reserving seats');
+      const response = await reservationService.reserve({
+        seance_id: selectedSeanceId.value,
+        seats: selectedSeats.value,
+      });
+
+      if (response.status == 201) {
+        selectedSeats.value.forEach((seat) => {
+          socket.emit('seat:confirm', {
+            seanceId: selectedSeanceId.value,
+            row: seat.row,
+            col: seat.col,
+            userId: auth.user.id,
+          });
+          room.value.layout[seat.row][seat.col].etat = 'taken';
+        });
+
+        notificationStore.pushNotification({
+          message: 'Payment successful! Your seats are confirmed.',
+          type: 'success',
+        });
+
+        selectedSeats.value = [];
+        // Destroy Payment Element after success
+        if (paymentElement.value) {
+          paymentElement.value.destroy();
+          elements.value = null;
+          paymentElement.value = null;
+          isPaymentElementMounted.value = false;
+          clientSecret.value = null;
+        }
+      } else {
+        throw new Error('Failed to reserve seats');
+      }
+    } else {
+      throw new Error('Payment not completed. Please try again.');
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+    let message = 'Payment failed. Please try again.';
+    notificationStore.pushNotification({
+      message,
+      type: 'error',
+    });
+  } finally {
+    isInPayment.value = false;
+    isProcessing.value = false;
+  }
+};
 
 onMounted( async  ()=>{
+
+    stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+    if (!stripe) {
+      notificationStore.pushNotification({
+        message: 'Failed to load payment system. Please refresh the page.',
+        type: 'error',
+      });
+      return;
+    }
+    
     selectedSeanceId.value =route.params.id ;
     socket.emit("seance:join", { seanceId: selectedSeanceId.value });
     console.log(selectedSeanceId.value);
