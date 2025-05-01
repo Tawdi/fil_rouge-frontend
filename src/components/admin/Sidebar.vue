@@ -70,5 +70,6 @@ const navItems = [
   { route: '/admin/movies', name: 'Movies' },
   { route: '/admin/cinemas', name: 'Cinemas' },
   { route: '/admin/users', name: 'Users' },
+  { route: '/admin/genres', name: 'Genres' },
 ]
 </script>

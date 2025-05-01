@@ -18,6 +18,7 @@ const CinemaAdminSeanceManager = () => import('../views/cinema_admin/SeanceManag
 // =====================  admin ================================
 const AdminDashboard = () => import('@/views/admin/Dashboard.vue');
 const AdminMovies = () => import('@/views/admin/Movies.vue');
+const AdminGenres = () => import('@/views/admin/Genres.vue');
 const AdminCinemas = () => import('@/views/admin/Cinemas.vue');
 const AdminUsers = () => import('@/views/admin/Users.vue');
 
@@ -77,6 +78,7 @@ const router = createRouter({
       children: [
         { path: 'dashboard', component: AdminDashboard  },
         { path: 'movies', component: AdminMovies },
+        { path: 'genres', component: AdminGenres },
         { path: 'cinemas', component: AdminCinemas },
         { path: 'users', component: AdminUsers },
        
