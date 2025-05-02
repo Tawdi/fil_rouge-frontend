@@ -119,7 +119,7 @@ const fetchCinemas = async () => {
   } catch (error) {
     console.error("Error fetching cinemas:", error);
     notificationStore.pushNotification({
-      message: "Erreur lors du chargement des cinémas.",
+      message: "Error loading cinemas.",
       type: "error",
     });
   } finally {
@@ -150,13 +150,13 @@ const saveCinema = async (cinemaData) => {
     if (showEditCinemaModal.value) {
       await cinemaService.updateCinema(cinemaData.id, cinemaData);
       notificationStore.pushNotification({
-        message: `Cinéma "${cinemaData.name}" mis à jour.`,
+        message: `Cinema "${cinemaData.name}" updated.`,
         type: "success",
       });
     } else {
       await cinemaService.createCinema(cinemaData);
       notificationStore.pushNotification({
-        message: `Cinéma "${cinemaData.name}" ajouté.`,
+        message: `Cinema "${cinemaData.name}" added.`,
         type: "success",
       });
     }
@@ -166,7 +166,7 @@ const saveCinema = async (cinemaData) => {
   } catch (error) {
     console.error("Error saving cinema:", error);
     notificationStore.pushNotification({
-      message: "Échec de l'enregistrement du cinéma.",
+      message: "Failed to save cinema.",
       type: "error",
     });
   }
@@ -178,7 +178,7 @@ const deleteCinema = async () => {
   try {
     await cinemaService.deleteCinema(currentCinema.value.id);
     notificationStore.pushNotification({
-      message: `Cinéma "${currentCinema.value.name}" supprimé.`,
+      message: `Cinema "${currentCinema.value.name}" deleted.`,
       type: "success",
     });
 
@@ -188,7 +188,7 @@ const deleteCinema = async () => {
   } catch (error) {
     console.error("Error deleting cinema:", error);
     notificationStore.pushNotification({
-      message: "Échec de la suppression du cinéma.",
+      message: "Failed to delete cinema",
       type: "error",
     });
   }

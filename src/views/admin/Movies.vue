@@ -117,7 +117,7 @@ const fetchMovies = async () => {
   } catch (error) {
     console.error("Error fetching movies:", error);
     notificationStore.pushNotification({
-      message: "Erreur lors du chargement des films.",
+      message: "Error loading movies.",
       type: "error",
     });
   }
@@ -130,13 +130,13 @@ const saveMovie = async (movieData) => {
     if (showEditMovieModal.value) {
       await movieService.updateMovie(movieData.id, movieData);
       notificationStore.pushNotification({
-        message: `Film "${movieData.titre}" modifié avec succès.`,
+        message: `Movie "${movieData.titre}" updated successfully.`,
         type: "success",
       });
     } else {
       await movieService.createMovie(movieData);
       notificationStore.pushNotification({
-        message: `Film "${movieData.titre}" ajouté avec succès.`,
+        message: `Movie "${movieData.titre}" added successfully.`,
         type: "success",
       });
     }
@@ -145,7 +145,7 @@ const saveMovie = async (movieData) => {
   } catch (error) {
     console.error("Error saving movie:", error);
     notificationStore.pushNotification({
-      message: "Échec de l'enregistrement du film.",
+      message: "Failed to save movie",
       type: "error",
     });
   }
@@ -172,7 +172,7 @@ const deleteMovie = async () => {
   try {
     await movieService.deleteMovie(currentMovie.value.id);
     notificationStore.pushNotification({
-      message: `Film "${currentMovie.value.titre}" supprimé avec succès.`,
+      message: `Movie "${currentMovie.value.titre}" deleted successfully.`,
       type: "success",
     });
 
@@ -182,7 +182,7 @@ const deleteMovie = async () => {
   } catch (error) {
     console.error("Error deleting movie:", error);
     notificationStore.pushNotification({
-      message: "Échec de la suppression du film.",
+      message: "Failed to delete movie",
       type: "error",
     });
   }

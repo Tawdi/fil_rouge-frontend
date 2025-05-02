@@ -119,7 +119,7 @@ const fetchGenres = async () => {
   } catch (error) {
     console.error("Error fetching genres:", error);
     notificationStore.pushNotification({
-      message: "Erreur lors du chargement des Genres.",
+      message: "Error loading genres.",
       type: "error",
     });
   }
@@ -132,13 +132,13 @@ const saveGenre = async (genreData) => {
     if (showEditGenreModal.value) {
       await genreService.updateGenre(genreData.id, genreData);
       notificationStore.pushNotification({
-        message: `Genre "${genreData.name}" modifié avec succès.`,
+        message: `Genre "${genreData.name}" updated successfully.`,
         type: "success",
       });
     } else {
       await genreService.createGenre(genreData);
       notificationStore.pushNotification({
-        message: `Genre "${genreData.name}" ajouté avec succès.`,
+        message: `Genre "${genreData.name}" added successfully.`,
         type: "success",
       });
     }
@@ -147,7 +147,7 @@ const saveGenre = async (genreData) => {
   } catch (error) {
     console.error("Error saving genre:", error);
     notificationStore.pushNotification({
-      message: "Échec de l'enregistrement du Genre.",
+      message: "Failed to save genre.",
       type: "error",
     });
   }
@@ -174,7 +174,7 @@ const deleteGenre = async () => {
   try {
     await genreService.deleteGenre(currentGenre.value.id);
     notificationStore.pushNotification({
-      message: `Genre "${currentGenre.value.name}" supprimé avec succès.`,
+      message: `Genre "${currentGenre.value.name}" deleted successfully.`,
       type: "success",
     });
 
@@ -184,7 +184,7 @@ const deleteGenre = async () => {
   } catch (error) {
     console.error("Error deleting genre:", error);
     notificationStore.pushNotification({
-      message: "Échec de la suppression du Genre.",
+      message: "Failed to delete genre.",
       type: "error",
     });
   }
