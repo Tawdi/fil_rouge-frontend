@@ -2,11 +2,9 @@
     <header  class="fixed top-0 z-[100] w-full bg-[#0f0f0f]/50 backdrop-blur-sm py-4">
         <div class=" navbar mx-auto flex items-center justify-between py-4">
           <!-- <div class="flex items-center gap-12"> -->
-            <a href="/" class="flex items-center gap-2">
-              <div class="relative h-8 w-8 rounded-full bg-[#e50000] flex items-center justify-center">
-                <div class="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-0.5"></div>
-              </div>
-              <span class="text-xl font-bold">MovieSeat</span>
+            <a href="/" class="flex items-center gap-2 ">
+              <img src="/images/ms-logo.png" alt="" class="h-14">
+              <span class="sr-only">MovieSeat</span>
             </a>
             <!-- Mobile Menu Button -->
             <button
@@ -58,7 +56,9 @@
             </button>
             <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-md shadow-lg border border-gray-700 z-50">
               <ul class="py-2 text-sm text-white">
-                <li><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
+                <li v-if="auth.user.role == 'user'" ><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
+                <li v-else-if="auth.user.role == 'cinema_admin'" ><router-link to="/cinema-admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
+                <li v-else-if="auth.user.role == 'super_admin'" ><router-link to="/admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
                 <li><button @click="auth.logout" class="block w-full text-left px-4 py-2 hover:bg-[#333]">Logout</button></li>
               </ul>
             </div>
@@ -109,7 +109,9 @@
             </button>
             <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-md shadow-lg border border-gray-700 z-50">
               <ul class="py-2 text-sm text-white">
-                <li><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
+                <li v-if="auth.user.role == 'user'" ><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
+                <li v-else-if="auth.user.role == 'cinema_admin'" ><router-link to="/cinema-admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
+                <li v-else-if="auth.user.role == 'super_admin'" ><router-link to="/admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
                 <li><button @click="auth.logout" class="block w-full text-left px-4 py-2 hover:bg-[#333]">Logout</button></li>
               </ul>
             </div>

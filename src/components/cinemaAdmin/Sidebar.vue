@@ -8,7 +8,10 @@
       <div class="h-full flex flex-col overflow-hidden" v-if="isOpen || isMobile">
         <!-- Header -->
         <div class="flex items-center justify-between h-16 px-4 border-b border-[#333333]">
-          <span class="ml-2 font-bold text-lg">MovieSeat</span>
+          <a href="/" class="flex items-center gap-2 ">
+              <img src="/images/ms-logo.png" alt="" class="h-9">
+              <span class="sr-only">MovieSeat</span>
+            </a>
           <button @click="$emit('toggle-sidebar')" class="p-1 rounded-md hover:bg-[#333333] md:hidden">
             <!-- Close icon -->
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -70,7 +73,7 @@
     { route: '/cinema-admin/room-manage', name: 'Room Manager' },
     { route: '/cinema-admin/seance-manage', name: 'Seance Manager' },
     // { route: '/cinema-admin/bookings', name: 'Bookings' },
-    // { route: '/cinema-admin/users', name: 'Users' },
+    { route: '/cinema-admin/settings', name: 'Settings' },
   ]
   </script>
   
