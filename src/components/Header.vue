@@ -50,7 +50,7 @@
              <!-- If authenticated -->
             <div v-if="auth.isAuthenticated"  class="relative" @click="toggleDropdown">
             <button class="text-[#999999] hover:text-white p-2 flex items-center gap-1">
-              <img :src="auth.user?.profile_image" alt="Avatar" class="w-6 h-6 rounded-full object-cover" v-if="auth.user?.profile_image" />
+              <img :src="storageUrl+auth.user?.profile_image" alt="Avatar" class="w-6 h-6 rounded-full object-cover" v-if="auth.user?.profile_image" />
               <span class="text-xs">{{ auth.user?.name }}</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M6 9l6 6 6-6" />
@@ -101,7 +101,7 @@
              <!-- If authenticated -->
              <div v-if="auth.isAuthenticated"  class="relative" @click="toggleDropdown">
             <button class="text-[#999999] hover:text-white p-2 flex items-center gap-1">
-              <img :src="auth.user?.profile_image" alt="Avatar" class="w-6 h-6 rounded-full object-cover" v-if="auth.user?.profile_image" />
+              <img :src="storageUrl+auth.user?.profile_image" alt="Avatar" class="w-6 h-6 rounded-full object-cover" v-if="auth.user?.profile_image" />
               <span class="text-xs">{{ auth.user?.name }}</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M6 9l6 6 6-6" />
@@ -153,7 +153,7 @@ import { useRoute } from 'vue-router';
 
 import { useAuthStore } from '@/stores/auth'
 const auth = useAuthStore()
-
+const storageUrl = import.meta.env.VITE_STORAGE_URL;
 let mobileMenuOpen = ref(false);
 const toggleMobileMenu = ()=>{
     mobileMenuOpen.value = !mobileMenuOpen.value;
