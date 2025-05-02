@@ -261,6 +261,8 @@
 import { onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import axios from '@/utils/axios';
+import { useNotificationStore } from "@/stores/notificationStore";
+const notificationStore = useNotificationStore();
 const storageUrl = import.meta.env.VITE_STORAGE_URL;
 const auth = useAuthStore()
 const changePassword_success = ref('');
@@ -302,10 +304,16 @@ const handleFileChange = async (event) => {
     localStorage.removeItem('user');
     await auth.fetchUser()
     Profile.value.profile_image = storageUrl + auth.user.profile_image;
-    alert('Image uploaded successfully!');
+    notificationStore.pushNotification({
+      message: "Image uploaded successfully!",
+      type: "success",
+    });
   } catch (error) {
     console.error('Error uploading image:', error);
-    alert('Failed to upload image');
+    notificationStore.pushNotification({
+      message: "Failed to upload image",
+      type: "error",
+    });
   }
 };
 
@@ -313,7 +321,7 @@ onMounted(() => {
   if (auth.user) {
     Profile.value.name = auth.user.name;
     Profile.value.email = auth.user.email;
-    Profile.value.profile_image = storageUrl+auth.user.profile_image ?? "/images/support.webp" ;
+    Profile.value.profile_image = auth.user.profile_image ? storageUrl + auth.user.profile_image : "/images/popcorn.jpg" ;
     Profile.value.created_at = new Date(auth.user.created_at).toLocaleDateString(undefined, {
       year: 'numeric',
       month: 'long',
@@ -325,11 +333,17 @@ const updateProfile = async () => {
   try {
     const response = await axios.put('/user/profile', Profile.value);
     auth.user = response.data.user;
-    localStorage.setItem('user', JSON.stringify(auth.user));  // Update local storage
-    alert('Profile updated successfully!');
+    localStorage.setItem('user', JSON.stringify(auth.user)); 
+    notificationStore.pushNotification({
+      message: "Profile updated successfully!",
+      type: "success",
+    });
   } catch (error) {
     console.error('Error updating profile:', error);
-    alert('Failed to update profile');
+    notificationStore.pushNotification({
+      message: "Failed to update profile",
+      type: "error",
+    });
   }
 };
 
