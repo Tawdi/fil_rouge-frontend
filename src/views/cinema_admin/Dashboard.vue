@@ -7,7 +7,20 @@
          />
         <!-- Stats Cards -->
         <StatsCards :stats="stats" />
-        
+
+        <!-- Main -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Left-->
+          <div class="lg:col-span-2 space-y-6">
+
+            <RevenueChart :data="revenueData" />
+
+          </div>
+          <!-- right -->
+           <div>
+
+           </div>
+        </div>
       </main>
     </div>
 </template>
@@ -16,6 +29,7 @@
 import { onMounted, ref } from 'vue';
 import DashboardHeader from '../../components/admin/DashboardHeader.vue'
 import StatsCards from '../../components/admin/StatsCards.vue'
+import RevenueChart from '../../components/cinemaAdmin/RevenueChart.vue'
 import { Chart, registerables } from 'chart.js';
 import statsServise from '@/services/statsService';
 
