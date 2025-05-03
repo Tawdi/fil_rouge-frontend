@@ -3,7 +3,7 @@
     <h3 class="font-bold mb-6">Top Movies</h3>
     <div class="space-y-4">
       <div v-for="(movie, index) in movies" :key="index" class="flex items-center">
-        <img :src="movie.image" :alt="movie.title" class="w-10 h-14 object-cover rounded-md mr-3" />
+        <img :src="movie.poster" :alt="movie.title" class="w-10 h-14 object-cover rounded-md mr-3" />
         <div class="flex-1 min-w-0">
           <h4 class="text-sm font-medium truncate">{{ movie.title }}</h4>
           <p class="text-xs text-[#999999]">{{ movie.bookings }} bookings</p>

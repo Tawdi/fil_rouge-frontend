@@ -77,6 +77,7 @@
               </div>
               <button
                 v-if="!isPaymentElementMounted"
+                v-show="selectedSeats.length > 0"
                 class="w-full bg-blue-500 hover:bg-blue-600 text-[#E5E5E5] px-4 py-2 rounded-md text-sm font-semibold transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-blue-500"
                 :disabled="isProcessing"
                 @click="initializePayment"

@@ -4,6 +4,7 @@
       <div v-for="(movie, index) in movies" :key="movie.id" class="flex items-center justify-between py-2">
         <div class="flex items-center space-x-3">
           <span class="text-[#999999] w-6">{{ index + 1 }}.</span>
+          <img :src="movie.poster" alt="poster" class="w-10 h-14 object-cover rounded-md mr-3" />
           <span class="text-white">{{ movie.titre }}</span>
         </div>
       </div>

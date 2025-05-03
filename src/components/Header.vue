@@ -3,7 +3,7 @@
         <div class=" navbar mx-auto flex items-center justify-between py-4">
           <!-- <div class="flex items-center gap-12"> -->
             <a href="/" class="flex items-center gap-2 ">
-              <img src="/images/ms-logo.png" alt="" class="h-14">
+              <img src="/images/ms-logo.png" alt="" class="h-10 lg:h-14">
               <span class="sr-only">MovieSeat</span>
             </a>
             <!-- Mobile Menu Button -->
