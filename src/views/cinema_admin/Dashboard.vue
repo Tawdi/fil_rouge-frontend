@@ -17,9 +17,11 @@
 
           </div>
           <!-- right -->
-           <div>
+           <div class="space-y-6">
 
              <TopMovies :movies="topMovies" />
+
+             <UpcomingSeances :seances="upcomingSeances" />
            </div>
         </div>
       </main>
@@ -32,6 +34,7 @@ import DashboardHeader from '../../components/admin/DashboardHeader.vue'
 import StatsCards from '../../components/admin/StatsCards.vue'
 import RevenueChart from '../../components/cinemaAdmin/RevenueChart.vue'
 import TopMovies from '../../components/cinemaAdmin/TopMovies.vue'
+import UpcomingSeances from '../../components/cinemaAdmin/UpcomingSeances.vue'
 import { Chart, registerables } from 'chart.js';
 import statsServise from '@/services/statsService';
 
