@@ -15,6 +15,7 @@
 
             <RevenueChart :data="revenueData" />
 
+            <CurrentMovies :movies="currentMovies" />
           </div>
           <!-- right -->
            <div class="space-y-6">
@@ -35,6 +36,7 @@ import StatsCards from '../../components/admin/StatsCards.vue'
 import RevenueChart from '../../components/cinemaAdmin/RevenueChart.vue'
 import TopMovies from '../../components/cinemaAdmin/TopMovies.vue'
 import UpcomingSeances from '../../components/cinemaAdmin/UpcomingSeances.vue'
+import CurrentMovies from '../../components/cinemaAdmin/CurrentMovies.vue'
 import { Chart, registerables } from 'chart.js';
 import statsServise from '@/services/statsService';
 
