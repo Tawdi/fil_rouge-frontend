@@ -19,6 +19,7 @@
           <!-- right -->
            <div>
 
+             <TopMovies :movies="topMovies" />
            </div>
         </div>
       </main>
@@ -30,6 +31,7 @@ import { onMounted, ref } from 'vue';
 import DashboardHeader from '../../components/admin/DashboardHeader.vue'
 import StatsCards from '../../components/admin/StatsCards.vue'
 import RevenueChart from '../../components/cinemaAdmin/RevenueChart.vue'
+import TopMovies from '../../components/cinemaAdmin/TopMovies.vue'
 import { Chart, registerables } from 'chart.js';
 import statsServise from '@/services/statsService';
 
