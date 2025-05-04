@@ -91,6 +91,7 @@
                 </span>
                 <span v-else>Continue to Checkout</span>
               </button>
+             <div class="flex mt-4 gap-5">
               <button
                 v-if="isPaymentElementMounted"
                 class="w-full bg-green-500 hover:bg-green-600 text-[#E5E5E5] px-4 py-2 rounded-md text-sm font-semibold transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-green-500"
@@ -110,6 +111,14 @@
                 </span>
                 <span v-else>Confirm Payment</span>
               </button>
+              <button
+                v-if="isPaymentElementMounted"
+                @click="cancelReservation"
+                class="flex-1 text-nowrap w-full bg-red-500 hover:bg-red-600 text-[#E5E5E5] px-4 py-2 rounded-md text-sm font-semibold transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-red-500"
+              >
+                Cancel Reservation
+              </button>
+             </div>
             </div>
         </div>
     </div>
@@ -376,6 +385,37 @@ const confirmPayment = async () => {
     isProcessing.value = false;
   }
 };
+
+const cancelReservation = async () => {
+
+  selectedSeats.value.forEach(seat => {
+    socket.emit("seat:release", {
+      seanceId: selectedSeanceId.value,
+      row: seat.row,
+      col: seat.col,
+      userId: auth.user.id,
+    });
+  });
+
+  selectedSeats.value = [];
+  isInPayment.value = false;
+  isProcessing.value = false;
+
+
+  if (paymentElement.value) {
+    paymentElement.value.destroy();
+    elements.value = null;
+    paymentElement.value = null;
+    isPaymentElementMounted.value = false;
+    clientSecret.value = null;
+  }
+
+  notificationStore.pushNotification({
+    message: 'Reservation canceled.',
+    type: 'info',
+  });
+};
+
 
 onMounted( async  ()=>{
 
