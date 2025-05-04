@@ -5,24 +5,24 @@
             <div class="flex flex-col gap-6">
                 <!--  -->
                 <div class="w-full rounded-lg overflow-hidden relative bg-cover bg-center"
-                    :style="{ backgroundImage: `url(/images/home.png)` }">
+                    :style="{ backgroundImage: movie.background ??`url(/images/home.png)` }">
                     <div class=" w-full flex flex-col sm:flex-row p-4 items-center backdrop-blur-sm">
                         <div class="aspect-[2/3] w-full max-w-[150px] sm:max-w-[200px] mx-auto mb-4 sm:mb-0 rounded-lg overflow-hidden">
-                            <img src="/images/support.webp" alt=""
+                            <img :src="movie.poster" :alt="movie.titre"
                                 class="w-full h-full object-cover" />
                         </div>
                         <div class="flex-1 text-center sm:text-left sm:pl-4 ">
-                            <h1 class="text-2xl font-bold">Cenima Alpha</h1>
-                            <p class="text-gray-300 text-sm sm:text-base">Casablanca CT 1029 Ain Chock</p>
+                            <h1 class="text-2xl font-bold">Cinema : {{room.cinema?.name}}</h1>
+                            <p class="text-gray-300 text-sm sm:text-base">address : {{room.cinema?.address}}</p>
                         </div>
                         <div class="mt-4 sm:mt-0 w-24 bg-white text-black rounded-md overflow-hidden">
                             <div class="p-2 text-center">
-                                <div class="text-xs sm:text-sm font-medium">THU</div>
-                                <div class="text-xl sm:text-2xl font-bold">25</div>
-                                <div class="text-xs sm:text-sm font-medium">MAR</div>
+                                <div class="text-xs sm:text-sm font-medium">{{ showTime.weekday }}</div>
+                                <div class="text-xl sm:text-2xl font-bold">{{showTime.day}}</div>
+                                <div class="text-xs sm:text-sm font-medium">{{showTime.month}}</div>
                             </div>
                             <div class="bg-yellow-400 text-black text-center py-1 font-medium">
-                                12:30
+                                {{showTime.time}}
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Room from '@/components/user/Room.vue'
 import seanceService from '@/services/seanceService'
 import { useNotificationStore } from "@/stores/notificationStore";
@@ -152,7 +152,9 @@ const userId = auth.user.id;
 const notificationStore = useNotificationStore();
 const selectedSeanceId = ref(null);
 const seance = ref({});
+const showTime = ref({});
 const room = ref({});
+const movie = ref({});
 const selectedSeats = ref([]); 
 const isProcessing =ref(false)
 const isInPayment =ref(false)
@@ -166,6 +168,7 @@ const fetchSeance = async ()=>{
         const reservetions = response2.data ;
         seance.value = response.data
         room.value = seance.value.room
+        movie.value = seance.value.movie
         room.value.layout= JSON.parse(room.value.layout)
 
         reservetions.forEach((rsv)=> { room.value.layout[rsv.row][rsv.col].etat='taken' } )
@@ -416,6 +419,18 @@ const cancelReservation = async () => {
   });
 };
 
+const seanceDateInfo = () => {
+  const options = { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' };
+  const date = new Date(seance.value.start_time?.replace(' ', 'T')); 
+console.log(seance.value.start_time);
+  return {
+    weekday: date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(),
+    day: date.getDate(), 
+    month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+    time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
+  };
+};
+
 
 onMounted( async  ()=>{
 
@@ -432,7 +447,7 @@ onMounted( async  ()=>{
     socket.emit("seance:join", { seanceId: selectedSeanceId.value });
     console.log(selectedSeanceId.value);
      await fetchSeance();
-
+     showTime.value = seanceDateInfo()
     socket.emit("seat:getHeld", { seanceId: selectedSeanceId.value ,userId:auth.user.id });
 
     socket.on("seat:heldList", ({ heldByUser, heldByOthers }) => {
