@@ -89,7 +89,10 @@ instance.interceptors.response.use(
         isRefreshing = false
       }
     }
-
+    if (error.response && error.response.status === 404) {
+      console.error('Resource not found:', originalRequest.url)
+      router.push('/404')
+    }
     return Promise.reject(error)
   }
 )

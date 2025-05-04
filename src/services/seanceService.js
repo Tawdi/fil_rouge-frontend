@@ -9,6 +9,9 @@ export default {
     return axios.get(`/seances/${id}`);
   },
 
+  getForMovie(id) {
+    return axios.get(`/seances/movie/${id}`);
+  },
   createSeance(seance) {
     return axios.post('/cinema-admin/seances', seance);
   },

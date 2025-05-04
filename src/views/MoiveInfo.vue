@@ -13,20 +13,20 @@
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center h-full justify-center  sm:px-16 py-8 backdrop-blur-sm">
           <!-- Movie Poster -->
           <div class="w-64 h-96 col-start-1  sm:col-end-6 lg:col-end-4 rounded-xl overflow-hidden bg-gray-800 justify-self-center">
-            <img :src="movie.poster" alt="Kantara movie poster" class="w-full h-full object-cover" />
+            <img :src="movie.poster" :alt="movie.titre" class="w-full h-full object-cover" />
           </div>
 
           <!-- Movie Info -->
           <div class="ml-8 max-w-md lg:col-start-4 sm:col-start-6 sm:col-end-12 lg:col-end-9 justify-self-center ">
-            <h1 class="text-4xl font-bold mb-1">{{ movie.title }}</h1>
-            <p class="text-sm mb-2">Release date: {{movie.releaseDate}}</p>
+            <h1 class="text-4xl font-bold mb-1">{{ movie.titre }}</h1>
+            <p class="text-sm mb-2">Release date: {{formatDate(movie.release_date)}}</p>
 
             <p class="text-sm text-gray-300 mb-4">
               with {{ movie.actors }}
             </p>
 
             <p class="text-sm">
-              {{ movie.desc }}
+              {{ movie.description }}
             </p>
           </div>
 
@@ -58,65 +58,119 @@
               <span class="text-xl font-bold">{{ day.date }}</span>
               <span class="text-xs">{{ day.month }}</span>
             </button>
-            <div class="text-[#272727] w-20 h-20 bg-[#D9D9D9] p-3 rounded-lg flex flex-col items-center">
+            <!-- <div class="text-[#272727] w-20 h-20 bg-[#D9D9D9] p-3 rounded-lg flex flex-col items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span class="text-xs block text-center mt-1">Calendar</span>
-          </div>
+          </div> -->
           </div>
       </div>
     </section>
-
-        <!-- Cinema and Showtimes -->
-    <section class="container mx-auto  px-4 ">
-      <div class="bg-[#1f1f1f] rounded-xl p-6">
-        <h2 class="text-2xl font-bold mb-1">Cinema Alpha</h2>
-        <p class="text-gray-400 mb-6">Casablanca CT 1029 Ain Chock</p>
-
-        <div class="flex flex-col sm:flex-row gap-4 sm:gap-8">
-          <button 
-            v-for="(time, index) in showtimes" 
-            :key="index"
-            class="bg-yellow-400 text-black font-bold py-3 px-8 rounded-lg"
-          >
-            <div class="text-xl">{{ time.time }}</div>
-            <div class="text-xs">{{ time.seats }} seats left</div>
-          </button>
-        </div>
-      </div>
-    </section>
+    <section 
+  class="container mx-auto px-4" 
+  v-for="cinema in filteredCinemaSeances" 
+  :key="cinema.cinema_id"
+>
+  <div class="bg-[#1f1f1f] rounded-xl p-6">
+    <h2 class="text-2xl font-bold mb-1">{{ cinema.cinema_name }}</h2>
+    <p class="text-gray-400 mb-6">{{ cinema.cinema_address }}</p>
+    <div class="flex flex-col sm:flex-row gap-4 sm:gap-8">
+      <button
+        v-for="seance in cinema.seances"
+        :key="seance.id"
+        class="bg-yellow-400 text-black font-bold py-3 px-8 rounded-lg"
+      >
+        <div class="text-xl">{{ new Date(seance.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</div>
+      </button>
+    </div>
+  </div>
+</section>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import seanceService from '@/services/seanceService'
+import { useNotificationStore } from "@/stores/notificationStore";
+const route = useRoute();
+const notificationStore = useNotificationStore();
+const selectedMovieId = ref(null);
+const movie = ref({})
+const cinemaSeances = ref([]);
+const days = ref([]);
+const selectedDay = ref(null);
+const fetchData = async ()=>{
+  try {
+    const response = await seanceService.getForMovie(selectedMovieId.value)
+    cinemaSeances.value = response.data.cinemas; 
+    movie.value = response.data.movie ;
+    const allSeances = response.data.cinemas.flatMap(cinema => cinema.seances);
 
-const movie = ref({
-  id : 1,
-  title: "kantara",
-  releaseDate: "22 jan 2025",
-  poster: "/images/support.webp",
-  actors: "Mark Wahlberg, Monib Abhat, Michelle Dockery, Topher Grace, by Mel Gibson",
-  background: "/images/support.webp",
-  genre: "action",
-  desc :" A fiery young man clashes with an unflinching forest officer in a south Indian village where spirituality, fate and folklore rule the lands.",
-})
+    const uniqueDates = Array.from(
+      new Set(
+        allSeances.map(seance =>
+          new Date(seance.start_time).toISOString().split("T")[0]
+        )
+      )
+    ).sort();
 
-const selectedDay =ref(0);
-const days = ref([
-        { name: 'THU', date: '25', month: 'MAR' },
-        { name: 'FRI', date: '26', month: 'MAR' },
-        { name: 'SAT', date: '27', month: 'MAR' },
-        { name: 'SUN', date: '28', month: 'MAR' },
-        { name: 'MON', date: '29', month: 'MAR' }
-      ]);
+    days.value = uniqueDates.map(dateStr => {
+      const date = new Date(dateStr);
+      return {
+        iso: dateStr,
+        name: date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase(),
+        date: date.toLocaleDateString("en-US", { day: "2-digit" }),
+        month: date.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
+      };
+    });
+    selectedDay.value = 0;
+    
+  } catch (error) {
+    console.error("Error fetching seance:", error);
 
-const showtimes= ref( [
-        { time: '12:30', seats: '20' },
-        { time: '15:00', seats: '100' },
-        { time: '18:30', seats: '120' }
-      ])
+    notificationStore.pushNotification({
+      message: "Erreur fetching data for this movie.",
+      type: "error",
+    });
+  }
+}
+const filteredCinemaSeances = computed(() => {
+  if (!days.value.length || selectedDay.value === null) return [];
+
+  const selectedDateISO = days.value[selectedDay.value].iso;
+
+  return cinemaSeances.value.map(cinema => {
+    const filteredSeances = cinema.seances.filter(seance => {
+      const seanceDate = new Date(seance.start_time).toISOString().split("T")[0];
+      return seanceDate === selectedDateISO;
+    });
+
+    return {
+      ...cinema,
+      seances: filteredSeances
+    };
+  }).filter(cinema => cinema.seances.length > 0); 
+});
+
+const formatDate = (date) => {
+  if (!date) return ''
+  const Options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }
+  return new Date(date).toLocaleDateString('en-GB', Options)
+}
+
+onMounted( async ()=>{
+    selectedMovieId.value = route.params.id ;
+
+    await fetchData();
+
+});
+
 </script>
 
 <style>
