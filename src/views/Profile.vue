@@ -177,7 +177,9 @@
                   </div>
                   <div class="pt-3 flex justify-between border-t border-[#333333]">
                     <button class="text-[#e50000] hover:text-[#ff0707] font-medium transition-colors">
-                      View Ticket
+                      <router-link :to="{ name: 'tickets', params: { id: booking.id } }">
+                        View Ticket
+                      </router-link>
                     </button>
                   </div>
                 </div>
