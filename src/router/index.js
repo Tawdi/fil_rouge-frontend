@@ -10,11 +10,13 @@ const MovieDetail = () => import('@/views/MoiveInfo.vue');
 const CinemaInfo = () => import('@/views/CinemaInfo.vue');
 const Profile = () => import('@/views/Profile.vue');
 const SeatsSealection = () => import('@/views/SeatsSelection.vue');
+const Tickets = ()=> import('@/views/TicketsList.vue');
 // ===================== cinema admin ================================
 const CinemaAdminDashboard = () => import('../views/cinema_admin/Dashboard.vue');
 const CinemaAdminRoomManager = () => import('../views/cinema_admin/RoomManager.vue');
 const CinemaAdminSeanceManager = () => import('../views/cinema_admin/SeanceManager.vue');
 const CinemaAdminSettings = () => import('@/views/cinema_admin/Settings.vue');
+// const CinemaAdminBookings = () => import('@/views/cinema_admin/BookingsManager.vue');
 // =====================  admin ================================
 const AdminDashboard = () => import('@/views/admin/Dashboard.vue');
 const AdminMovies = () => import('@/views/admin/Movies.vue');
@@ -51,10 +53,18 @@ const router = createRouter({
         { path: '/cinema/:id', component: CinemaInfo},
         { path: '/support', component: Support },
         { path: '/about', component: About },
-        { path: '/profile', component: Profile , meta: { requiresAuth: true , requiredRole:'user'} ,},
+        { path: '/profile', component: Profile , meta: { requiresAuth: true } ,},
         { path: '/booking/:id', component: SeatsSealection ,  meta: { requiresAuth: true } },
+        {
+          path: '/tickets/:id',
+          name: 'tickets',
+          component: Tickets,
+          props: true
+        },
+       
       ]
     },
+    
 
     // ===============================================================
     // =========================  cinema admin =======================
@@ -66,6 +76,7 @@ const router = createRouter({
         { path: 'dashboard', component: CinemaAdminDashboard },
         { path: 'room-manage', component: CinemaAdminRoomManager },
         { path: 'seance-manage', component: CinemaAdminSeanceManager },
+        // { path: 'bookings', component: CinemaAdminBookings },
         { path: 'settings', component: CinemaAdminSettings },
         
       ]

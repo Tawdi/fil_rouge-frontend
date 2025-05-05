@@ -56,8 +56,8 @@
             </button>
             <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-md shadow-lg border border-gray-700 z-50">
               <ul class="py-2 text-sm text-white">
-                <li v-if="auth.user.role == 'user'" ><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
-                <li v-else-if="auth.user.role == 'cinema_admin'" ><router-link to="/cinema-admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
+                <li  ><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
+                <li v-if="auth.user.role == 'cinema_admin'" ><router-link to="/cinema-admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
                 <li v-else-if="auth.user.role == 'super_admin'" ><router-link to="/admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
                 <li><button @click="auth.logout" class="block w-full text-left px-4 py-2 hover:bg-[#333]">Logout</button></li>
               </ul>
@@ -109,10 +109,10 @@
             </button>
             <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-md shadow-lg border border-gray-700 z-50">
               <ul class="py-2 text-sm text-white">
-                <li v-if="auth.user.role == 'user'" ><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]">My Profile</router-link></li>
-                <li v-else-if="auth.user.role == 'cinema_admin'" ><router-link to="/cinema-admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
+                <li><router-link to="/profile" class="block px-4 py-2 hover:bg-[#333]" @click="closeMobileMenu">My Profile</router-link></li>
+                <li v-if="auth.user.role == 'cinema_admin'" ><router-link to="/cinema-admin/dashboard" class="block px-4 py-2 hover:bg-[#333]" @click="closeMobileMenu">My Dashboard</router-link></li>
                 <li v-else-if="auth.user.role == 'super_admin'" ><router-link to="/admin/dashboard" class="block px-4 py-2 hover:bg-[#333]">My Dashboard</router-link></li>
-                <li><button @click="auth.logout" class="block w-full text-left px-4 py-2 hover:bg-[#333]">Logout</button></li>
+                <li><button @click="()=>{auth.logout();closeMobileMenu()}" class="block w-full text-left px-4 py-2 hover:bg-[#333]" >Logout</button></li>
               </ul>
             </div>
           </div>

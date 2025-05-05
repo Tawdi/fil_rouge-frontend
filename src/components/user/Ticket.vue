@@ -30,7 +30,7 @@ const props = defineProps({
     required: true
   },
   seat: {
-    type: String,
+    type: Object,
     required: true
   },
   price: {
@@ -43,11 +43,20 @@ const formattedPrice = computed(() => {
   return `$${props.price.toFixed(2)}`
 })
 
-
-const showActions = ref(false)
-const toggleActions = () => {
-  showActions.value = !showActions.value
-}
+const getSeatLabel = ( row , col ,rowNaming = 'letters' ) => {
+     row++; col++;
+    if (rowNaming === 'letters') {
+      let label = '';
+    while (row > 0) {
+      let remainder = (row - 1) % 26;
+      label = String.fromCharCode(65 + remainder) + label;
+      row = Math.floor((row - 1) / 26);
+    }
+    return label+'-'+col.toString();
+    } else {
+      return `${row}-${col}`;
+    }
+  };
 </script>
 
 <template>
@@ -97,7 +106,7 @@ const toggleActions = () => {
           </div>
           <div class="text-center">
             <p class="text-[#999999] text-xs">Seat</p>
-            <p class="text-white font-bold">{{ seat }}</p>
+            <p class="text-white font-bold">{{ getSeatLabel(seat.row,seat.col) }}</p>
           </div>
         </div>
         
@@ -106,7 +115,10 @@ const toggleActions = () => {
             <p class="text-[#999999] text-xs">Price</p>
             <p class="text-white text-lg font-bold">{{ formattedPrice }}</p>
           </div>
-
+          <div>
+            <p class="text-[#999999] text-xs">Type</p>
+            <p class="text-white text-lg font-bold">{{ seat.type }}</p>
+          </div>
         </div>
         
         <!-- Barcode -->

@@ -14,7 +14,7 @@
         :date="bookingDate"
         :time="bookingTime"
         :seat="seat"
-        :price="10.0" 
+        :price=reservation.pricing[seat.type] 
       />
     </div> 
 </section>
@@ -29,31 +29,20 @@ const route = useRoute();
 const selectedSeats =ref([])
 const reservationId =ref(null)
 
-const bookingDate = '2025-05-15'
-const bookingTime = '18:00'
+const bookingDate = ref('')
+const bookingTime = ref('')
 
 const reservation = ref({})
 
-const getSeatLabel = ( row , col ,rowNaming = 'letters' ) => {
-     row++; col++;
-    if (rowNaming === 'letters') {
-      let label = '';
-    while (row > 0) {
-      let remainder = (row - 1) % 26;
-      label = String.fromCharCode(65 + remainder) + label;
-      row = Math.floor((row - 1) / 26);
-    }
-    return label+'-'+col.toString();
-    } else {
-      return `${row}-${col}`;
-    }
-  };
+
 
 onMounted(async () => {
   reservationId.value = route.params.id ;
   const { data } = await reservationService.show(reservationId.value)
   reservation.value = data
-  selectedSeats.value = data.seats.map(seat => getSeatLabel(seat.row ,seat.col,data.rowNaming))
+  selectedSeats.value = data.seats
+  bookingDate.value = new Date(data.date).toLocaleDateString("en-US", {year:'numeric', month: 'short',day: "2-digit" })
+  bookingTime.value = new Date(data.date).toLocaleTimeString([],{ hour: '2-digit', minute: '2-digit' ,hour12:false })
 })
 
 </script>
