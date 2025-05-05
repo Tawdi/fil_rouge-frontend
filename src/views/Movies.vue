@@ -116,12 +116,12 @@ import genreService from "@/services/genreService";
 import GenreSlide from '../components/GenreSlide.vue';
 import MoviesSlide from '../components/MoviesSlide.vue';
 import MovieCard from '../components/MovieCard.vue';
-
+import { useNotificationStore } from "@/stores/notificationStore";
 const slides = ref([])
 const currentSlide = ref(0)
 const categories =ref( []);
 const movies = ref([]);
-
+const notificationStore = useNotificationStore();
   const nextSlide = () => {
     currentSlide.value = (currentSlide.value + 1) % slides.value.length
   }
@@ -136,12 +136,20 @@ const movies = ref([]);
   }
   
   const fetchData =async ()=>{
-    const response = await movieService.getMoviesInCinema();
+    try {
+      const response = await movieService.getMoviesInCinema();
     const response2 = await genreService.getGenres();
 
     slides.value = response.data 
     movies.value = response.data
     categories.value =response2.data
+
+    } catch (error) {
+       notificationStore.pushNotification({
+          message: "Erreur fetching data.",
+          type: "error",
+        });
+    }
   }
 
   let autoSlideInterval

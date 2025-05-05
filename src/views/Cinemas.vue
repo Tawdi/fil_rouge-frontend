@@ -11,10 +11,10 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <div v-for="cinema in cinemas" :key="cinema.id"
                     class="bg-[#1e1e1e] rounded-xl shadow-md overflow-hidden  duration-300">
-                    <img :src="cinema.image" :alt="cinema.name" class="w-full h-40 object-cover" />
+                    <img :src="storageUrl+cinema.image" :alt="cinema.name" class="w-full h-40 object-cover" />
                     <div class="p-4">
                         <h2 class="text-lg font-semibold mb-1">{{ cinema.name }}</h2>
-                        <p class="text-sm text-gray-400">{{ cinema.location }}</p>
+                        <p class="text-sm text-gray-400">{{ cinema.address }}</p>
                         <button @click="goToCinema(cinema.id)"
                             class="mt-4 bg-red-600 hover:bg-red-700 text-white w-full py-2 rounded-md">
                             View Details
@@ -28,24 +28,28 @@
 
 
 <script setup>
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-
-
+import cinemaService from '@/services/cinemaService'
+import { useNotificationStore } from "@/stores/notificationStore";
+const storageUrl = import.meta.env.VITE_STORAGE_URL;
+const notificationStore = useNotificationStore();
 const router = useRouter();
-const cinemas = [
-    {
-        id: 1,
-        name: 'Cinema One',
-        location: 'Downtown City',
-        image: '/images/support.webp'
-    },
-    {
-        id: 2,
-        name: 'Galaxy Cinemas',
-        location: 'Uptown Center',
-        image: '/images/support.webp'
-    },
-]
+const cinemas = ref([]);
+
+const fetchData = async ()=>{
+    try {
+        const response = await cinemaService.getCinemas()
+        cinemas.value = response.data.data ;
+    } catch (error) {
+        notificationStore.pushNotification({
+          message: "Erreur fetching data.",
+          type: "error",
+        });
+    }
+}
+
+onMounted(fetchData);
 
 function goToCinema(id) {
    router.push(`/cinema/${id}`);
