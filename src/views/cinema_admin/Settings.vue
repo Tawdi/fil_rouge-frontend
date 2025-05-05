@@ -140,7 +140,8 @@
 import { onMounted, ref } from 'vue';
 import axios from '@/utils/axios'; 
 const storageUrl = import.meta.env.VITE_STORAGE_URL;
-
+import { useNotificationStore } from "@/stores/notificationStore";
+const notificationStore = useNotificationStore();
 const img = ref({
   imageName: '',
   imagePreview: null,
@@ -186,10 +187,15 @@ async function submitCinemaForm() {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    alert('Cinema information updated successfully!');
+    notificationStore.pushNotification({
+          message: "Cinema information updated successfully!",
+        });
   } catch (error) {
     console.error(error);
-    alert('Failed to update cinema information.');
+    notificationStore.pushNotification({
+          message: "Failed to update cinema information.",
+          type: "error",
+        });
   }
 }
 
@@ -202,10 +208,15 @@ async function submitAdminForm() {
       new_password_confirmation: adminInfo.value.password_confirmation,
     });
 
-    alert('Admin account updated successfully!');
+    notificationStore.pushNotification({
+          message: "Admin account updated successfully!",
+        });
   } catch (error) {
     console.error(error);
-    alert('Failed to update admin account.');
+    notificationStore.pushNotification({
+          message: "Failed to update admin account.",
+          type: "error",
+        });
   }
 }
 
@@ -224,6 +235,10 @@ const fetchInfo = async () => {
     adminInfo.value.email = data.admin?.email || '';
   } catch (error) {
     console.error('Failed to fetch info:', error);
+    notificationStore.pushNotification({
+          message: "Failed to fetch info",
+          type: "error",
+        });
   }
 };
 

@@ -138,7 +138,7 @@ const notificationStore = useNotificationStore();
   const fetchData =async ()=>{
     try {
       const response = await movieService.getMoviesInCinema();
-    const response2 = await genreService.getGenres();
+    const response2 = await genreService.getGenresImg();
 
     slides.value = response.data 
     movies.value = response.data

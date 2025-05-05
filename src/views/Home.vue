@@ -57,7 +57,7 @@ const categories =ref([]);
 
 const fetchData = async ()=>{
     const response = await movieService.getMoviesInCinema();
-    const response2 = await genreService.getGenres();
+    const response2 = await genreService.getGenresImg();
 
     movies.value = response.data
     categories.value =response2.data
