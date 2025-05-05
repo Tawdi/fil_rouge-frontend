@@ -4,6 +4,9 @@ export default {
   getMovies() {
     return axios.get("/movies");
   },
+  getMoviesInCinema(){
+    return axios.get("/movies-has-seances");
+  },
   createMovie(data) {
     return axios.post("/admin/movies", data);
   },

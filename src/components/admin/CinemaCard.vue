@@ -3,7 +3,7 @@
     <!-- Cinema Image -->
     <div class="relative">
       <img 
-        :src="cinema.image" 
+        :src="storageUrl+cinema.image" 
         :alt="cinema.name" 
         class="w-full h-48 object-cover"
       />
@@ -40,7 +40,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue';
-
+const storageUrl = import.meta.env.VITE_STORAGE_URL;
 defineEmits(['edit', 'delete']);
 
 defineProps({

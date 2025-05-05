@@ -49,13 +49,13 @@
             class="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-2"
           >
             <MovieCard
-              :title="movie.title"
-              :image="movie.image"
+              :title="movie.titre"
+              :image="movie.poster"
               :id="movie.id"
               :duration="movie.duration"
               :rating="movie.rating"
-              :genre="movie.genre"
-              :release-date="movie.releaseDate"
+              :genre="movie.genre?.name"
+              :release-date="movie.release_date"
             />
           </div>
         </div>

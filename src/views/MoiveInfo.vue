@@ -81,7 +81,9 @@
         :key="seance.id"
         class="bg-yellow-400 text-black font-bold py-3 px-8 rounded-lg"
       >
-        <div class="text-xl">{{ new Date(seance.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</div>
+        <router-link :to="`/booking/${seance.id}`" >
+          <div class="text-xl">{{ new Date(seance.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</div>
+        </router-link>
       </button>
     </div>
   </div>
