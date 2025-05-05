@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import JsBarcode from 'jsbarcode'
 const props = defineProps({
   movieTitle: {
     type: String,
@@ -56,7 +57,20 @@ const getSeatLabel = ( row , col ,rowNaming = 'letters' ) => {
     } else {
       return `${row}-${col}`;
     }
-  };
+};
+
+const barcodeEl = ref(null)
+const barcodeContent = `${props.movieTitle}-${props.date}-${props.seat.row}-${props.seat.col}`
+onMounted(() => {
+  JsBarcode(barcodeEl.value, barcodeContent, {
+    format: "CODE128",
+    lineColor: "#666666", 
+    width: 1,
+    height: 40,
+    displayValue: false,
+    background: "transparent"
+  })
+})
 </script>
 
 <template>
@@ -120,9 +134,12 @@ const getSeatLabel = ( row , col ,rowNaming = 'letters' ) => {
             <p class="text-white text-lg font-bold">{{ seat.type }}</p>
           </div>
         </div>
-        
         <!-- Barcode -->
         <div class="barcode-container py-2 flex justify-center">
+          <svg ref="barcodeEl"></svg>
+        </div>
+        <!-- Barcode -->
+        <!-- <div class="barcode-container py-2 flex justify-center">
           <div class="barcode h-12 w-full flex items-center justify-center">
             <svg class="w-full h-full" viewBox="0 0 100 30">
               <rect v-for="(_, i) in 30" :key="i" 
@@ -134,7 +151,7 @@ const getSeatLabel = ( row , col ,rowNaming = 'letters' ) => {
               />
             </svg>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

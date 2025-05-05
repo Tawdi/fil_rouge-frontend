@@ -12,6 +12,7 @@
     "@stripe/stripe-js": "^7.2.0",
     "axios": "^1.8.4",
     "chart.js": "^4.4.9",
+    "jsbarcode": "^3.11.6",
     "pinia": "^3.0.2",
     "socket.io-client": "^4.8.1",
     "vue": "^3.5.13",

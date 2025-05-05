@@ -237,7 +237,11 @@
                   <td class="px-6 py-4">${{ booking.amount.toFixed(2) }}</td>
                   <td class="px-6 py-4">
                     <div class="flex space-x-2">
-                      <button class="text-[#e50000] hover:underline">View</button>
+                      <button class="text-[#e50000] hover:underline">
+                        <router-link :to="{ name: 'tickets', params: { id: booking.id } }">
+                        View 
+                      </router-link>
+                    </button>
                     </div>
                   </td>
                 </tr>
