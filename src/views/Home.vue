@@ -41,93 +41,31 @@
 
 <script setup>
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import FAQ from '../components/FAQ.vue';
 import { useRouter } from 'vue-router';
 import GenreSlide from '../components/GenreSlide.vue';
 import MoviesSlide from '../components/MoviesSlide.vue';
-
+import movieService from "@/services/movieService";
+import genreService from "@/services/genreService";
 
 const router = useRouter();
 
-const movies = ref([
-  { id:1, title: "KANTARA", image: "https://picsum.photos/400/600?random=1", duration: "1h 57min", rating: 5, genre: "action", releaseDate: "12 Mar 2024" },
-  { id:2, title: "BLADE RUNNER 2049", image: "https://picsum.photos/400/600?random=2", duration: "2h 43min", rating: 5, genre: "sci-fi", releaseDate: "14 Mar 2024" },
-  { id:3, title: "PUSHPA", image: "https://picsum.photos/400/600?random=3", duration: "2h 10min", rating: 4, genre: "action", releaseDate: "16 Mar 2024" },
-  { id:4, title: "ADIPURUSH", image: "https://picsum.photos/400/600?random=4", duration: "1h 45min", rating: 3, genre: "drama", releaseDate: "18 Mar 2024" },
-  { id:5, title: "INCEPTION", image: "https://picsum.photos/400/600?random=5", duration: "2h 28min", rating: 5, genre: "sci-fi", releaseDate: "20 Mar 2024" },
-  { id:6, title: "THE BATMAN", image: "https://picsum.photos/400/600?random=6", duration: "2h 56min", rating: 4, genre: "action", releaseDate: "22 Mar 2024" },
-]);
+const movies = ref([]);
 
-const categories =ref( [
-        {
-          name: 'Action',
-          posters: [
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5'
-          ]
-        },
-        {
-          name: 'Adventure',
-          posters: [
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5'
-          ]
-        },
-        {
-          name: 'Comedy',
-          posters: [
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5'
-          ]
-        },
-        {
-          name: 'Drama',
-          posters: [
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5'
-          ]
-        },
-        {
-          name: 'Horror',
-          posters: [
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5'
-          ]
-        },{
-          name: 'Drama',
-          posters: [
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5'
-          ]
-        },
-        {
-          name: 'Horror',
-          posters: [
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5',
-            'https://picsum.photos/400/600?random=5'
-          ]
-        },
-      ]);
+const categories =ref([]);
 
+const fetchData = async ()=>{
+    const response = await movieService.getMoviesInCinema();
+    const response2 = await genreService.getGenres();
+
+    movies.value = response.data
+    categories.value =response2.data
+}
 const goToPage = (path)=>{
   router.push(path);
 }
-
+onMounted(fetchData);
 </script>
 
 <style scoped></style>
