@@ -51,15 +51,9 @@
         </div>
         <div class="flex flex-col sm:flex-row justify-between items-start  gap-4">
           <div class="flex items-center gap-2 mb-6">
-            <input type="checkbox" id="terms" v-model="form.termsAccepted"
-              class="rounded border-[#999999] text-[#e50000] focus:ring-[#e50000]" />
-            <label for="terms" class="text-sm text-[#999999]">
-              I agree with Terms of Use and Privacy Policy
-            </label>
           </div>
-
-          <button class="bg-[#e50000] text-white py-3 px-6 text-nowrap rounded md:w-fit w-full" @click="sendMessage">
-            Send Message
+          <button class="bg-[#e50000] text-white py-3 px-6 text-nowrap rounded md:w-fit w-full" @click="sendMessage" :disabled="isProcessing"  >
+            {{ !isProcessing ? 'Send Message' : "Sending ..." }}
           </button>
         </div>
       </div>
@@ -73,16 +67,43 @@
 <script setup>
 import { ref } from 'vue'
 import FAQ from '../components/FAQ.vue';
-
-// Form data
+import axios from '@/utils/axios'
+import { useNotificationStore } from "@/stores/notificationStore";
+const notificationStore = useNotificationStore();
+const isProcessing =ref(false)
 const form = ref({
   firstName: '',
   lastName: '',
   email: '',
   phone: '',
-  message: '',
-  termsAccepted: false
+  message: ''
 })
+
+const sendMessage = async () => {
+  isProcessing.value = true;
+  try {
+    await axios.post('/support', form.value)
+    form.value = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      message: '',
+      termsAccepted: false
+    }
+    notificationStore.pushNotification({
+          message: "Message sent successfully!",
+        });
+  } catch (error) {
+    console.error(error)
+    notificationStore.pushNotification({
+          message: "Something went wrong. Please try again later.",
+          type: "error",
+        });
+  }finally{
+    isProcessing.value = false;
+  }
+}
 </script>
 
 <style></style>
