@@ -2,14 +2,15 @@
   <div class="bg-[#1a1a1a] rounded-lg p-4 hover:bg-[#262626] transition-colors">
     <div class="grid grid-cols-2 gap-2 mb-4">
       <div
-        v-for="(poster, index) in posters"
+        v-for="(_, index) in 4"
         :key="`${name}-${index}`"
         class="aspect-[3/4] relative rounded-md overflow-hidden"
       >
         <img
-          :src="poster"
+          :src="posters[index] || '/images/halflogo.png'"
           :alt="`${name} movie`"
-          class="w-full h-full object-cover"
+          class="w-full  object-cover cursor-pointer"
+          @error="handleError(index)"
         />
       </div>
     </div>
@@ -25,8 +26,12 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref } from 'vue';
+const props = defineProps({
   name: String,
   posters: Array
 });
+const handleError = (index) => {
+  props.posters[index] = '/images/halflogo.png'; 
+};
 </script>

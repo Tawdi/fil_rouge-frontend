@@ -4,6 +4,9 @@ export default {
   getGenres() {
     return axios.get("/genres");
   },
+  getGenresImg() {
+    return axios.get("/genres/imgs");
+  },
   createGenre(data) {
     return axios.post("/admin/genres", data);
   },
