@@ -179,9 +179,6 @@
                     <button class="text-[#e50000] hover:text-[#ff0707] font-medium transition-colors">
                       View Ticket
                     </button>
-                    <button class="text-[#999999] hover:text-white transition-colors">
-                      Cancel
-                    </button>
                   </div>
                 </div>
               </div>
@@ -245,11 +242,7 @@
               </tbody>
             </table>
           </div>
-          <div class="p-4 border-t border-[#333333] flex justify-center">
-            <button class="text-[#999999] hover:text-white transition-colors">
-              Load More
-            </button>
-          </div>
+
         </div>
       </div>
 
@@ -262,6 +255,7 @@ import { onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import axios from '@/utils/axios';
 import { useNotificationStore } from "@/stores/notificationStore";
+import reservationService from '@/services/reservationService.js'
 const notificationStore = useNotificationStore();
 const storageUrl = import.meta.env.VITE_STORAGE_URL;
 const auth = useAuthStore()
@@ -280,7 +274,8 @@ const Profile = ref({
   'created_at': ""
 });
 const fileInput = ref(null);
-
+const upcomingBookings = ref([]);
+const pastBookings = ref([]);
 const triggerFileInput = () => {
   if (fileInput.value) {
     fileInput.value.click();
@@ -317,7 +312,31 @@ const handleFileChange = async (event) => {
   }
 };
 
-onMounted(() => {
+const fetchData = async ()=>{
+  try {
+    const response = await reservationService.userReserevation();
+    const allReservations = response.data;
+    const now = new Date();
+
+    upcomingBookings.value = allReservations.filter(reservation => {
+      const reservationDateTime = new Date(`${reservation.date} ${reservation.time}`);
+      return reservationDateTime > now;
+    });
+
+    pastBookings.value = allReservations.filter(reservation => {
+      const reservationDateTime = new Date(`${reservation.date} ${reservation.time}`);
+      return reservationDateTime <= now;
+    });
+
+  } catch (error) {
+    notificationStore.pushNotification({
+          message: "Erreur fetching data.",
+          type: "error",
+        });
+  }
+}
+
+onMounted( async () => {
   if (auth.user) {
     Profile.value.name = auth.user.name;
     Profile.value.email = auth.user.email;
@@ -327,6 +346,7 @@ onMounted(() => {
       month: 'long',
     });
   }
+  await fetchData();
 });
 
 const updateProfile = async () => {
@@ -376,66 +396,5 @@ const changePassword = async () => {
     changePassword_success.value = '';  
   }
 };
-const upcomingBookings = ref([
-  {
-    id: 1,
-    movieTitle: 'Avengers: Endgame',
-    movieImage: '/images/support.webp',
-    cinema: 'Cineplex Odeon',
-    date: 'April 15, 2023',
-    time: '7:30 PM',
-    seats: ['G12', 'G13']
-  },
-  {
-    id: 2,
-    movieTitle: 'The Batman',
-    movieImage: '/images/support.webp',
-    cinema: 'AMC Theatres',
-    date: 'April 22, 2023',
-    time: '8:00 PM',
-    seats: ['F5', 'F6', 'F7']
-  }
-]);
-const pastBookings = ref([
-  {
-    id: 1,
-    movieTitle: 'Dune',
-    movieImage: '/images/support.webp',
-    cinema: 'Regal Cinemas',
-    date: 'March 10, 2023',
-    time: '6:45 PM',
-    seats: ['H8', 'H9'],
-    amount: 32.50
-  },
-  {
-    id: 2,
-    movieTitle: 'No Time to Die',
-    movieImage: '/images/support.webp',
-    cinema: 'Landmark Theatres',
-    date: 'February 25, 2023',
-    time: '9:15 PM',
-    seats: ['J10', 'J11'],
-    amount: 30.25
-  },
-  {
-    id: 3,
-    movieTitle: 'Spider-Man: No Way Home',
-    movieImage: '/images/support.webp',
-    cinema: 'Alamo Drafthouse',
-    date: 'February 12, 2023',
-    time: '5:30 PM',
-    seats: ['D15', 'D16'],
-    amount: 35.00
-  },
-  {
-    id: 4,
-    movieTitle: 'Black Widow',
-    movieImage: '/images/support.webp',
-    cinema: 'Cineplex Odeon',
-    date: 'January 28, 2023',
-    time: '7:00 PM',
-    seats: ['E7', 'E8'],
-    amount: 28.75
-  }
-]);
+
 </script>
