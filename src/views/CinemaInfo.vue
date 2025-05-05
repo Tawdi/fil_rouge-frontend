@@ -2,10 +2,10 @@
   <section class="container  text-white min-h-screen">
     <!-- Cinema Header / Banner -->
     <div class="relative w-full h-[400px] md:h-[500px] lg:h-[800px]">
-      <img :src="cinema.image" :alt="cinema.name" class="w-full h-full object-cover opacity-60" />
+      <img :src="storageUrl+cinema.image" :alt="cinema.name" class="w-full h-full object-cover opacity-60" />
       <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-center">
         <h1 class="text-3xl md:text-5xl font-bold">{{ cinema.name }}</h1>
-        <p class="text-sm md:text-base text-gray-300 mt-2">{{ cinema.location }}</p>
+        <p class="text-sm md:text-base text-gray-300 mt-2">{{ cinema.address }}</p>
       </div>
     </div>
 
@@ -16,13 +16,13 @@
       <div v-if="cinema.movies && cinema.movies.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div v-for="movie in cinema.movies" :key="movie.id" class="bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg">
           <MovieCard
-              :title="movie.title"
-              :image="movie.image"
+              :title="movie.titre"
+              :image="movie.poster"
               :id="movie.id"
               :duration="movie.duration"
               :rating="movie.rating"
-              :genre="movie.genre"
-              :release-date="movie.releaseDate"
+              :genre="movie.genre?.name"
+              :release-date="movie.release_date"
             />
         </div>
       </div>
@@ -35,24 +35,34 @@
 </template>
 <script setup>
 import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import MovieCard from '../components/MovieCard.vue';
+import cinemaService from '@/services/cinemaService'
+import { useNotificationStore } from "@/stores/notificationStore";
+const storageUrl = import.meta.env.VITE_STORAGE_URL;
+const notificationStore = useNotificationStore();
+import { onMounted, ref } from 'vue';
 
-
+const selectedCinemaId =ref(null);
 const router = useRouter();
-const cinema = {
-  id: 1,
-  name: 'Cinema One',
-  location: 'Downtown City',
-  image: '/images/support.webp',
-  movies: [
-    { id: 4, title: "ADIPURUSH", image: "https://picsum.photos/400/600?random=4", duration: "1h 45min", rating: 3, genre: "drama", releaseDate: "18 Mar 2024" },
-    { id: 5, title: "INCEPTION", image: "https://picsum.photos/400/600?random=5", duration: "2h 28min", rating: 5, genre: "sci-fi", releaseDate: "20 Mar 2024" },
-    { id: 6, title: "THE BATMAN", image: "https://picsum.photos/400/600?random=6", duration: "2h 56min", rating: 4, genre: "action", releaseDate: "22 Mar 2024" },
-
-  ]
-}
+const route = useRoute();
+const cinema = ref({});
 function goToMovie(id) {
   router.push(`/movie/${id}`)
 }
-
+const fetchData = async ()=>{
+  try {
+    const response = await cinemaService.getCinema(selectedCinemaId.value)
+    cinema.value = response.data;
+  } catch (error) {
+    notificationStore.pushNotification({
+      message: "Erreur fetching data for this cinema.",
+      type: "error",
+    });
+  }
+}
+onMounted(async ()=>{
+  selectedCinemaId.value = route.params.id ;
+  await fetchData();
+});
 </script>

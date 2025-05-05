@@ -4,6 +4,9 @@ export default {
   getCinemas() {
     return axios.get("/cinemas");
   },
+  getCinema(id) {
+    return axios.get(`/cinemas/${id}`);
+  },
   createCinema(data) {
     return axios.post("/admin/cinemas", data);
   },
