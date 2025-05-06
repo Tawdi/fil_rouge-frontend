@@ -64,7 +64,7 @@
       <!-- Cinemas Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <CinemaCard
-          v-for="cinema in cinemas"
+          v-for="cinema in filteredCinemas"
           :key="cinema.id"
           :cinema="cinema"
           @edit="editCinema(cinema)"
@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import CinemaCard from "@/components/admin/CinemaCard.vue";
 import CinemaFormModal from "@/components/admin/CinemaFormModal.vue";
 import ConfirmationModal from "@/components/admin/ConfirmationModal.vue";
@@ -127,6 +127,14 @@ const fetchCinemas = async () => {
   }
 };
 
+const filteredCinemas = computed(() => {
+    if (!searchQuery.value) return cinemas.value;
+    
+    const query = searchQuery.value.toLowerCase();
+    return cinemas.value.filter(cinema => 
+    cinema.name.toLowerCase().includes(query) || cinema.address.toLowerCase().includes(query)
+    );
+ });
 onMounted(fetchCinemas);
 
 const editCinema = (cinema) => {

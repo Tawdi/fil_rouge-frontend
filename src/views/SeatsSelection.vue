@@ -5,7 +5,7 @@
             <div class="flex flex-col gap-6">
                 <!--  -->
                 <div class="w-full rounded-lg overflow-hidden relative bg-cover bg-center"
-                    :style="{ backgroundImage: movie.background ??`url(/images/home.png)` }">
+                    :style="{ backgroundImage:  `url(${movie.background})` }">
                     <div class=" w-full flex flex-col sm:flex-row p-4 items-center backdrop-blur-sm">
                         <div class="aspect-[2/3] w-full max-w-[150px] sm:max-w-[200px] mx-auto mb-4 sm:mb-0 rounded-lg overflow-hidden">
                             <img :src="movie.poster" :alt="movie.titre"

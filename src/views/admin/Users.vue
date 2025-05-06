@@ -75,7 +75,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-[#333333]">
-              <tr v-for="user in users" :key="user.id" class="text-sm hover:bg-[#262626]">
+              <tr v-for="user in filteredUsers" :key="user.id" class="text-sm hover:bg-[#262626]">
                 <td class="px-4 py-3 font-medium">{{ user.id }}</td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-3">
@@ -238,6 +238,21 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching users:", error);
   }
+});
+
+const filteredUsers = computed(() => {
+  return users.value.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                          user.email.toLowerCase().includes(searchQuery.value.toLowerCase());
+
+    const matchesRole = roleFilter.value === '' || user.role === roleFilter.value;
+
+    const matchesStatus = statusFilter.value === '' || user.status === statusFilter.value;
+
+    const matchesDate = !dateFilter.value || new Date(user.created_at).toISOString().slice(0, 10) >= dateFilter.value;
+
+    return matchesSearch && matchesRole && matchesStatus && matchesDate;
+  });
 });
 
 

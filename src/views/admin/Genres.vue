@@ -66,7 +66,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
       >
         <GenreCard
-          v-for="genre in genres"
+          v-for="genre in filteredGenres"
           :key="genre.id"
           :genre="genre"
           @edit="editGenre(genre)"
@@ -124,6 +124,15 @@ const fetchGenres = async () => {
     });
   }
 };
+
+const filteredGenres = computed(() => {
+    if (!searchQuery.value) return genres.value;
+    
+    const query = searchQuery.value.toLowerCase();
+    return genres.value.filter(genre => 
+    genre.name.toLowerCase().includes(query)
+    );
+});
 
 onMounted(fetchGenres);
 

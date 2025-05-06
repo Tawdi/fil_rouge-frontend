@@ -66,7 +66,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
       >
         <MovieCard
-          v-for="movie in movies"
+          v-for="movie in filteredMovies"
           :key="movie.id"
           :movie="movie"
           @edit="editMovie(movie)"
@@ -122,6 +122,15 @@ const fetchMovies = async () => {
     });
   }
 };
+
+const filteredMovies = computed(() => {
+    if (!searchQuery.value) return movies.value;
+    
+    const query = searchQuery.value.toLowerCase();
+    return movies.value.filter(movie => 
+    movie.titre.toLowerCase().includes(query) || movie.description.toLowerCase().includes(query)
+    );
+ });
 
 onMounted(fetchMovies);
 
