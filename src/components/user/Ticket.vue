@@ -78,7 +78,7 @@ onMounted(() => {
     <div 
       class="ticket bg-[#1a1a1a] border border-[#333333] rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:border-[#444444] hover:transform hover:-translate-y-1"
     >
-      <div class="ticket-header relative h-48 overflow-hidden">
+      <div class="ticket-header relative overflow-hidden">
         <img 
           :src="movieImage" 
           :alt="movieTitle" 

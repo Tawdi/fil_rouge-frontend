@@ -5,7 +5,7 @@
       'fixed top-0 left-0 md:sticky md:top-0 md:block'
     ]">
       <!-- Sidebar content -->
-      <div class="h-full flex flex-col overflow-hidden" v-if="isOpen || isMobile">
+      <div class="h-full flex flex-col overflow-hidden" style="width: inherit;" v-if="isOpen || isMobile">
         <!-- Header -->
         <div class="flex items-center justify-between h-16 px-4 border-b border-[#333333]">
           <a href="/" class="flex items-center gap-2 ">
