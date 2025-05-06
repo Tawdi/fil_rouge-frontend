@@ -1,8 +1,8 @@
 import axios from '@/utils/axios'
 
 export default {
-  async getRooms() {
-    return await axios.get("/cinema-admin/rooms");
+  async getRooms(params = {}) {
+    return await axios.get("/cinema-admin/rooms",{ params });
   },
 
   async createRoom(roomData) {

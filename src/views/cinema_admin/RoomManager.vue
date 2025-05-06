@@ -73,9 +73,12 @@
         <RoomList 
           v-if="showRoomList" 
           :rooms="rooms"
+          :current-page="currentPage"
+          :total-pages="totalPages"
           @create-room="startNewRoom"
           @edit-room="editRoom"
           @delete-room="confirmDeleteRoom"
+          @page-change="handlePageChange"
         />
 
         <!-- Step 1: Room Initialization -->
@@ -145,6 +148,9 @@ const roomData = ref({
   row_naming: 'letters',
   layout: []
 });
+
+const currentPage = ref(1);
+const totalPages = ref(1);
 
 const startNewRoom = () => {
   roomData.value = {
@@ -268,10 +274,13 @@ const saveRoom = async () => {
   }
 };
 
+
 const fetchRooms = async () => {
   try {
-    const response = await roomService.getRooms();
+    const response = await roomService.getRooms({ page: currentPage.value });
     rooms.value = response.data.data;
+    currentPage.value = response.data.current_page;
+    totalPages.value = response.data.last_page;
     rooms.value.forEach( (rm)=>{
       if (typeof rm.layout === "string") {
     try {
@@ -289,6 +298,11 @@ const fetchRooms = async () => {
       type: "error",
     });
   }
+};
+
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchRooms();
 };
 onMounted(fetchRooms);
 </script>

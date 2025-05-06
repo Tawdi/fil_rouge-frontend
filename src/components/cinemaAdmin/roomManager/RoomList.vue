@@ -107,21 +107,34 @@
           </button>
         </div>
       </div>
+      <!-- Pagination Component -->
+      <Pagination
+        v-if="filteredRooms.length > 0 && totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="handlePageChange"
+      />
     </div>
   </template>
   
   <script setup>
   import { ref, computed } from 'vue';
+import Pagination from '@/components/Pagination.vue';
   
   const props = defineProps({
     rooms: {
       type: Array,
       required: true
-    }
+    },
+    currentPage: Number,
+    totalPages: Number,
   });
-  
-  defineEmits(['create-room', 'edit-room', 'delete-room']);
-  
+
+  const emit = defineEmits(['create-room', 'edit-room', 'delete-room','page-change']);
+
+  const handlePageChange = (page) => {
+  emit('page-change', page);
+};
   const searchQuery = ref('');
   
   const filteredRooms = computed(() => {

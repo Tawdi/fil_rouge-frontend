@@ -135,7 +135,7 @@ import SeanceTimeline from '@/components/cinemaAdmin/seanceManager/SeanceTimelin
 import SeanceList from '@/components/cinemaAdmin/seanceManager/SeanceList.vue';
 import { formatDateTime, parseDateTime, getStartOfWeek, addDays } from '@/utils/dateTime';
 
-const viewType = ref('calendar');
+const viewType = ref('list');
 const showCreateSeance = ref(false);
 const editMode = ref(false);
 const seanceToDelete = ref(null);
@@ -189,9 +189,8 @@ const loadSeances = async () => {
 
     const [seancesResponse, moviesResponse, roomsResponse ] = await Promise.all([
       seanceService.getSeances({
-        start_date: filters.value.start_date,
-        end_date: filters.value.end_date
-      }),
+      ...filters.value 
+    }),
       movieService.getMovies(),
       roomService.getRooms(),
     ]);
