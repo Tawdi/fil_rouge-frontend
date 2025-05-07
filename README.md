@@ -59,6 +59,11 @@ repo/
 
 ---
 
+## Gestion en temps réel
+
+* Socket.IO pour diffusion des événements de réservation et de blocage de sièges
+* Redis comme broker de messages
+---
 ## Installation
 
 ```bash

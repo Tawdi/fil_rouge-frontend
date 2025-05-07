@@ -72,7 +72,7 @@
     { route: '/cinema-admin/dashboard', name: 'Dashboard' },
     { route: '/cinema-admin/room-manage', name: 'Room Manager' },
     { route: '/cinema-admin/seance-manage', name: 'Seance Manager' },
-    { route: '/cinema-admin/bookings', name: 'Bookings' },
+    // { route: '/cinema-admin/bookings', name: 'Bookings' },
     { route: '/cinema-admin/settings', name: 'Settings' },
   ]
   </script>

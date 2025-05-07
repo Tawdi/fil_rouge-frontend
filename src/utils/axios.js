@@ -93,6 +93,10 @@ instance.interceptors.response.use(
       console.error('Resource not found:', originalRequest.url)
       router.push('/404')
     }
+    if (error.response && error.response.status === 403) {
+      console.error('Resource not found:', originalRequest.url)
+      router.push('/403')
+    }
     return Promise.reject(error)
   }
 )
