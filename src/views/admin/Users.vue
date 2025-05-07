@@ -174,6 +174,11 @@
             </tbody>
           </table>
         </div>
+        <Pagination
+        v-if="users.length > 0 && totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="handlePageChange" />
       </div>
     </main>
   </div>
@@ -209,7 +214,7 @@
 
 <script setup>
 import { onMounted,computed, ref } from 'vue';
-
+import Pagination from '@/components/Pagination.vue';
 import userService from '@/services/userService';
 import ConfirmationModal from '@/components/admin/ConfirmationModal.vue';
 import UserDetailsModal from '@/components/admin/UserDetailsModal.vue';
@@ -230,15 +235,24 @@ const dateFilter = ref('');
 const roleFilter = ref('');
 const statusFilter = ref('');
 const currentUser = ref(null);
+const currentPage = ref(1);
+const totalPages = ref(1);
 
-onMounted(async () => {
+const fetchUsers = async () => {
   try {
-    const response = await userService.getUsers();
+    const response = await userService.getUsers({ page: currentPage.value });
     users.value = response.data.data;
+    currentPage.value = response.data.current_page;
+    totalPages.value = response.data.last_page;
   } catch (error) {
     console.error("Error fetching users:", error);
   }
-});
+}
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchUsers();
+};
+onMounted(fetchUsers);
 
 const filteredUsers = computed(() => {
   return users.value.filter(user => {

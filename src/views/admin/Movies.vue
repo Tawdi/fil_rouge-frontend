@@ -66,13 +66,18 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
       >
         <MovieCard
-          v-for="movie in filteredMovies"
+          v-for="movie in movies"
           :key="movie.id"
           :movie="movie"
           @edit="editMovie(movie)"
           @delete="confirmDeleteMovie(movie)"
         />
       </div>
+      <Pagination
+        v-if="movies.length > 0 && totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="handlePageChange" />
     </main>
   </div>
   <!-- Add/Edit Movie Modal -->
@@ -94,10 +99,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import MovieCard from "@/components/admin/MovieCard.vue";
 import MovieFormModal from "@/components/admin/MovieFormModal.vue";
 import ConfirmationModal from "@/components/admin/ConfirmationModal.vue";
+import Pagination from '@/components/Pagination.vue';
 
 import { useNotificationStore } from "@/stores/notificationStore";
 import movieService from "@/services/movieService";
@@ -109,11 +115,17 @@ const showAddMovieModal = ref(false);
 const showEditMovieModal = ref(false);
 const showDeleteModal = ref(false);
 const currentMovie = ref(null);
-
+const currentPage = ref(1);
+const totalPages = ref(1);
 const fetchMovies = async () => {
   try {
-    const response = await movieService.getMovies();
+    const response = await movieService.getMovies({ 
+      page: currentPage.value ,
+      search: searchQuery.value.trim(),
+    });
     movies.value = response.data.data;
+    currentPage.value = response.data.current_page;
+    totalPages.value = response.data.last_page;
   } catch (error) {
     console.error("Error fetching movies:", error);
     notificationStore.pushNotification({
@@ -122,16 +134,22 @@ const fetchMovies = async () => {
     });
   }
 };
-
-const filteredMovies = computed(() => {
-    if (!searchQuery.value) return movies.value;
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchMovies();
+};
+// const filteredMovies = computed(() => {
+//     if (!searchQuery.value) return movies.value;
     
-    const query = searchQuery.value.toLowerCase();
-    return movies.value.filter(movie => 
-    movie.titre.toLowerCase().includes(query) || movie.description.toLowerCase().includes(query)
-    );
- });
-
+//     const query = searchQuery.value.toLowerCase();
+//     return movies.value.filter(movie => 
+//     movie.titre.toLowerCase().includes(query) || movie.description.toLowerCase().includes(query)
+//     );
+//  });
+watch(searchQuery, (newQuery) => {
+  currentPage.value = 1;
+  fetchMovies();
+});
 onMounted(fetchMovies);
 
 const saveMovie = async (movieData) => {

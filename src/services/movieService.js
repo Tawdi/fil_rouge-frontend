@@ -1,8 +1,8 @@
 import axios from "@/utils/axios";
 
 export default {
-  getMovies() {
-    return axios.get("/movies");
+  getMovies(params={}) {
+    return axios.get("/movies",{ params });
   },
   getMoviesInCinema(){
     return axios.get("/movies-has-seances");
