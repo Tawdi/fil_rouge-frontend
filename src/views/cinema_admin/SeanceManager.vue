@@ -191,7 +191,7 @@ const loadSeances = async () => {
       seanceService.getSeances({
       ...filters.value 
     }),
-      movieService.getMovies(),
+      movieService.getAllMovies(),
       roomService.getRooms(),
     ]);
     

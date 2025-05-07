@@ -4,6 +4,9 @@ export default {
   getMovies(params={}) {
     return axios.get("/movies",{ params });
   },
+  getAllMovies(){
+    return axios.get("/movies-all");
+  },
   getMoviesInCinema(){
     return axios.get("/movies-has-seances");
   },

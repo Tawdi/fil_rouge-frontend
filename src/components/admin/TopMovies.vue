@@ -1,16 +1,11 @@
 <template>
   <div class="bg-[#1a1a1a] rounded-lg p-6 border border-[#333333]">
-    <h3 class="font-bold mb-6">Top Movies</h3>
-    <div class="space-y-4">
-      <div v-for="(movie, index) in movies" :key="index" class="flex items-center">
-        <img :src="movie.poster" :alt="movie.title" class="w-10 h-14 object-cover rounded-md mr-3" />
-        <div class="flex-1 min-w-0">
-          <h4 class="text-sm font-medium truncate">{{ movie.title }}</h4>
-          <p class="text-xs text-[#999999]">{{ movie.bookings }} bookings</p>
-        </div>
-        <div class="w-16 h-2 bg-[#262626] rounded-full overflow-hidden" :title="`${movie.occupancy}% occupancy`">
-          <div class="h-full bg-[#e50000]" :style="{ width: `${movie.occupancy}%` }"></div>
-        </div>
+    <h2 class="text-xl font-semibold text-white mb-4">Top Movies</h2>
+    <div v-for="(movie, index) in movies" :key="movie.id" class="flex items-center justify-between py-2">
+      <div class="flex items-center space-x-3">
+        <span class="text-[#999999] w-6">{{ index + 1 }}.</span>
+        <img :src="movie.poster" alt="poster" class="w-10 h-14 object-cover rounded-md mr-3" />
+        <span class="text-white">{{ movie.titre }}</span>
       </div>
     </div>
   </div>

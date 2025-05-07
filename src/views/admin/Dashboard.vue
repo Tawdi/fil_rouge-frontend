@@ -6,7 +6,9 @@
             <StatsCards :stats="stats" />
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <RevenueChart :revenue-data="revenueData" />
+                <div class="lg:col-span-2">
+                    <RevenueChart :data="revenueData" />
+                </div>
                 <TopMovies :movies="topMovies" />
             </div>
         </main>
@@ -18,10 +20,11 @@
 import { onMounted, ref } from 'vue';
 import DashboardHeader from '../../components/admin/DashboardHeader.vue'
 import StatsCards from '../../components/admin/StatsCards.vue'
-import RevenueChart from '../../components/admin/RevenueChart.vue'
+import RevenueChart from '../../components/cinemaAdmin/RevenueChart.vue'
 import TopMovies from '../../components/admin/TopMovies.vue'
 import statsServise from '@/services/statsService';
-
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 const stats = ref([]);
 const revenueData = ref([]);
 const topMovies = ref([]);
